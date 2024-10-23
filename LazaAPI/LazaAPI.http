@@ -1,0 +1,6 @@
+@LazaAPI_HostAddress = http://localhost:5099
+
+GET {{LazaAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
