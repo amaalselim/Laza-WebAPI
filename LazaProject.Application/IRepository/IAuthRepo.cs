@@ -24,6 +24,8 @@ namespace LazaProject.Application.IRepository
 		Task<object> LoginWithFacebookAsync (FacebookLoginDTO facebookLoginDTO);
 		Task<object> LoginWithTwitterAsync(TwitterLoginDTO twitterLoginDTO);
 
+		Task<bool> AssignRoleAsync(AssignRoleDto assignRoleDto);
+
 
 
 	}

@@ -28,16 +28,18 @@ namespace LazaProject.persistence.Repository
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
         private readonly IEmailService _emailservice;
+		private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AuthRepository(UserManager<ApplicationUser> user,
+		public AuthRepository(UserManager<ApplicationUser> user,
                               SignInManager<ApplicationUser> manager,
                               IMapper mapper,
-                              IConfiguration config)
+                              IConfiguration config, RoleManager<IdentityRole> roleManager)
         {
             _userManager = user;
             _manager = manager;
             _mapper = mapper;
             _config = config;
+			_roleManager = roleManager;
 
             string smtpServer = _config["SMTP:Server"];
             int smtpPort = int.Parse(_config["SMTP:Port"]);
@@ -358,7 +360,23 @@ namespace LazaProject.persistence.Repository
 			};
 		}
 
-		
+		public async Task<bool> AssignRoleAsync(AssignRoleDto assignRoleDto)
+		{
+			var user=await _userManager.FindByEmailAsync(assignRoleDto.Email);
+			if (user == null)
+			{
+				return false;
+			}
+			if (!await _roleManager.RoleExistsAsync(assignRoleDto.Role.ToString()))
+			{
+				var roleResult = await _roleManager.CreateAsync(new IdentityRole(assignRoleDto.Role.ToString()));
+			}
+			var result=await _userManager.AddToRoleAsync(user,assignRoleDto.Role.ToString());
+			return result.Succeeded;
+		}
+
+
+
 	}
 
 }

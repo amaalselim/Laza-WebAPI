@@ -2,6 +2,7 @@
 using LazaProject.Application.IUnitOfWork;
 using LazaProject.Core.DTO_S;
 using LazaProject.persistence.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -132,6 +133,19 @@ namespace LazaAPI.Controllers
 			}
 
 			return BadRequest(new { message = "Invalid Twitter login." });
+		}
+
+		[HttpPost("assign-role")]
+		public async Task<IActionResult> AssignRole([FromBody] AssignRoleDto assignRoleDto)
+		{
+			if (assignRoleDto == null) return BadRequest();
+			var result=await _unitOfWork.AuthRepo.AssignRoleAsync(assignRoleDto);
+			if (!result)
+			{
+				return NotFound("User Not Found or Could not assign role.");
+
+			}
+			return Ok("Role assigned successfully.");
 		}
 
 
