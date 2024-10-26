@@ -12,7 +12,6 @@ namespace LazaProject.Application.IRepository
     public interface IAuthRepo
 	{
 		
-
 		Task<IdentityResult> RegisterAsync (RegisterDTO registerDTO);
 		Task<object> LoginAsync (LoginDTO loginDTO);
 		Task<string> GeneratePasswordResetTokenAsync(ForgetPasswordDTO forgetPasswordDTO);
@@ -23,6 +22,7 @@ namespace LazaProject.Application.IRepository
 
 		Task<object> LoginWithGoogleAsync (GoogleLoginDTO googleLoginDTO);
 		Task<object> LoginWithFacebookAsync (FacebookLoginDTO facebookLoginDTO);
+		Task<object> LoginWithTwitterAsync(TwitterLoginDTO twitterLoginDTO);
 
 
 
