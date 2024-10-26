@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign in with Twitter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.18.6/hello.all.min.js"></script>
+    <script>
+        // إعداد hello.js بمفاتيح Twitter
+        hello.init({
+            twitter: 'JbChVOGAUxq0AsZTwKDjuKiaM'
+        }, { redirect_uri: 'http://localhost:5099/signin-twitter' });
+
+        function loginWithTwitter() {
+            hello('twitter').login().then(
+                function (auth) {
+                    console.log("Access Token:", auth.authResponse.access_token);
+                    // أرسل الـ Access Token إلى السيرفر للتحقق
+                    fetch('/api/auth/Login-Twitter', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ accessToken: auth.authResponse.access_token }),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("Server response:", data);
+                            document.getElementById('result').innerText = JSON.stringify(data);
+                        })
+                        .catch(error => console.error("Error:", error));
+                },
+                function (error) {
+                    console.error("Login error:", error);
+                }
+            );
+        }
+    </script>
+</head>
+<body>
+    <h1>Sign in with Twitter</h1>
+    <button onclick="loginWithTwitter()">Login with Twitter</button>
+    <div id="result"></div>
+</body>
+</html>
