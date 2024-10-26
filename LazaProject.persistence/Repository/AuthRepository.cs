@@ -73,7 +73,6 @@ namespace LazaProject.persistence.Repository
 			user.VerificationCode = verificationCode;  
 			await _userManager.UpdateAsync(user); 
 
-			var resetLink = $"https://yourapp.com/reset-password?email={email}&code={verificationCode}";
 
 			await _emailservice.SendEmailAsync(email,user.Name, "Reset Your Password",
 			$"Your verification code is:<br/><code style='font-size: 18px; color: #3498db;'>{verificationCode}</code>");
