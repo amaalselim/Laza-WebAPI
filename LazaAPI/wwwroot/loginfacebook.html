@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign in with Facebook</title>
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '531669809858651', // أدخلي هنا الـ App ID الخاص بك
+                cookie: true,
+                xfbml: true,
+                version: 'v12.0' // استخدمي النسخة المناسبة
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        function checkLoginState() {
+            FB.getLoginStatus(function (response) {
+                statusChangeCallback(response);
+            });
+        }
+
+        function statusChangeCallback(response) {
+            if (response.status === 'connected') {
+                const accessToken = response.authResponse.accessToken; // الحصول على الـ Access Token
+                console.log("Access Token: ", accessToken);
+
+                // أرسل الـ Access Token إلى الخادم الخاص بك للتحقق
+                fetch('/api/auth/Login-Facebook', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ accessToken: accessToken }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data); // معالجة الاستجابة من الخادم
+                        document.getElementById('result').innerText = JSON.stringify(data);
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            } else {
+                console.log('User not authenticated');
+                document.getElementById('result').innerText = 'User not authenticated. Please log in again.';
+            }
+        }
+
+        function logout() {
+            FB.logout(function (response) {
+                console.log('User logged out');
+                document.getElementById('result').innerText = 'User logged out. Please log in again.';
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Sign in with Facebook</h1>
+    <div>
+        <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+        </fb:login-button>
+    </div>
+    <div id="result"></div> 
+    <button onclick="logout()">Logout</button> 
+</body>
+</html>

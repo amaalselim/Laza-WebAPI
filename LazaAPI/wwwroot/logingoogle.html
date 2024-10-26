@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign in with Google</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <h1>Sign in with Google</h1>
+    <div id="g_id_onload"
+         data-client_id="719980863297-68mj5rs5p6p44lea8fehihimg730i4jb.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
+
+    <script>
+        function handleCredentialResponse(response) {
+            const id_token = response.credential;
+            console.log("ID Token: ", id_token);
+            
+            fetch('/api/auth/login-google', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ idToken: id_token }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); 
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+</html>
