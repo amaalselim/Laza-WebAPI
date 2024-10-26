@@ -20,6 +20,12 @@ namespace LazaAPI.Controllers
 			_unitOfWork = unitOfWork;
 			_authService = authService;
 		}
+		[HttpGet("All-Users")]
+		public async Task<IActionResult> getAllUsers()
+		{
+			var user=await _unitOfWork.Users.GetAllAsync();
+			return Ok(user);
+		}
 
 		[HttpPost("Register")]
 		public async Task<IActionResult> Register(RegisterDTO registerDTO)
@@ -115,7 +121,18 @@ namespace LazaAPI.Controllers
 		}
 
 
+		[HttpPost("Login-Twitter")]
+		public async Task<IActionResult> LoginWithTwitter(TwitterLoginDTO twitterLoginDTO)
+		{
+			var result = await _authService.LoginWithTwitterAsync(twitterLoginDTO);
 
+			if (result != null)
+			{
+				return Ok(result);
+			}
+
+			return BadRequest(new { message = "Invalid Twitter login." });
+		}
 
 
 
