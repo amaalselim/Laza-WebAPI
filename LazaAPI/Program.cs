@@ -18,6 +18,7 @@ using System.Text;
 using LazaProject.persistence.Services;
 using LazaProject.Application.IServices;
 using LazaProject.persistence.UnitOfWork;
+using LazaProject.Core.Enums;
 
 namespace LazaAPI
 {
@@ -62,6 +63,12 @@ namespace LazaAPI
 					policyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
 				});
 			});
+			builder.Services.AddAuthorization(options =>
+			{
+				options.AddPolicy(Roles.Admin.ToString(), policy => policy.RequireRole(Roles.Admin.ToString()));
+				options.AddPolicy(Roles.User.ToString(), policy => policy.RequireRole(Roles.User.ToString()));
+			});
+
 
 
 			builder.Services.AddAuthentication(options =>
@@ -121,7 +128,6 @@ namespace LazaAPI
 				{
 					Version = "v1",
 					Title = "ASP.NET�5�Web�API",
-					Description = " Laza Project"
 				});
 				//�To�Enable�authorization�using�Swagger�(JWT)����
 				swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
@@ -169,7 +175,6 @@ namespace LazaAPI
 
 			app.UseAuthentication();
 			app.UseAuthorization();
-			
 			
 
 
