@@ -9,6 +9,6 @@ namespace LazaProject.Core.DTO_S
     public class TwitterLoginDTO
 	{
 		public string AccessToken { get; set; }
-		public string TokenSecret { get; set; }
+		public string AccessTokenSecret { get; set; }
 	}
 }
