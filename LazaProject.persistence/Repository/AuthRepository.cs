@@ -161,7 +161,7 @@ namespace LazaProject.persistence.Repository
 
 		private async Task<bool> IsEmailValid(string email)
 		{
-			string apiKey = "6ad555fea7f14c12b583131f2e44b27b"; 
+			string apiKey = "153808b38c3e42c48051e9ede2098c49"; 
 			string apiUrl = $"https://api.zerobounce.net/v2/validate?api_key={apiKey}&email={email}";
 
 			using (var client = new HttpClient())
