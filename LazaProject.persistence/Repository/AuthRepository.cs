@@ -16,6 +16,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Tweetinvi.Models;
+using Tweetinvi;
 
 namespace LazaProject.persistence.Repository
 {
@@ -73,8 +75,8 @@ namespace LazaProject.persistence.Repository
 
 			var resetLink = $"https://yourapp.com/reset-password?email={email}&code={verificationCode}";
 
-			await _emailservice.SendEmailAsync(email, "Reset Your Password",
-			$"Your verification code is:<br/><code style='font-size: 24px; color: #3498db;'>{verificationCode}</code><br/>Please enter this code to reset your password.");
+			await _emailservice.SendEmailAsync(email,user.Name, "Reset Your Password",
+			$"Your verification code is:<br/><code style='font-size: 18px; color: #3498db;'>{verificationCode}</code>");
 
 		}
 
@@ -301,11 +303,63 @@ namespace LazaProject.persistence.Repository
 				Token = new JwtSecurityTokenHandler().WriteToken(token),
 				Expiration = expiration
 			};
-
-
-
-
 		}
+		public async Task<object> LoginWithTwitterAsync(TwitterLoginDTO twitterLoginDTO)
+		{
+			var consumerKey = _config["Twitter:ConsumerKey"];
+			var consumerSecret = _config["Twitter:ConsumerSecret"];
+
+
+			var appCredentials = new TwitterCredentials(consumerKey, consumerSecret, twitterLoginDTO.AccessToken, twitterLoginDTO.AccessTokenSecret);
+			var userClient = new TwitterClient(appCredentials);
+
+
+			var twitterUser = await userClient.Users.GetAuthenticatedUserAsync();
+
+			if (twitterUser == null)
+			{
+				throw new Exception("Invalid Twitter Access Token");
+			}
+
+			var email = twitterUser.Email; 
+			var user = await _userManager.FindByEmailAsync(email);
+			if (user == null)
+			{
+				user = new ApplicationUser
+				{
+					Name = twitterUser.Name,
+					UserName = email,
+					Email = email
+				};
+				await _userManager.CreateAsync(user);
+			}
+
+			var claims = new[]
+			{
+				new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+				new Claim(JwtRegisteredClaimNames.Email, user.Email),
+				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+			};
+
+			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"]));
+			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+			var expiration = DateTime.Now.AddDays(30);
+
+			var token = new JwtSecurityToken(
+				issuer: _config["JWT:Issuer"],
+				audience: _config["JWT:Audience"],
+				claims: claims,
+				expires: expiration,
+				signingCredentials: creds);
+
+			return new
+			{
+				Token = new JwtSecurityTokenHandler().WriteToken(token),
+				Expiration = expiration
+			};
+		}
+
+		
 	}
 
 }
