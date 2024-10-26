@@ -24,6 +24,11 @@ namespace LazaProject.persistence.Services
 		{
 			return await _authRepo.LoginWithFacebookAsync(facebookLoginDTO);
 		}
+		public async Task<object> LoginWithTwitterAsync(TwitterLoginDTO twitterLoginDTO)
+		{
+			return await _authRepo.LoginWithTwitterAsync(twitterLoginDTO);
+		}
+
 
 	}
 }
