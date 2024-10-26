@@ -8,6 +8,6 @@ namespace LazaProject.Application.IServices
 {
     public interface IEmailService
     {
-        Task SendEmailAsync(string email, string Subject, string message);
+        Task SendEmailAsync(string email,string userName, string Subject, string message);
     }
 }
