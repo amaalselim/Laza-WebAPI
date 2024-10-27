@@ -2,23 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sign in with Google</title>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Login</title>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="719980863297-76u9197qst1hrh61jalj7nu8efltiitj.apps.googleusercontent.com">
 </head>
 <body>
-    <h1>Sign in with Google</h1>
-    <div id="g_id_onload"
-         data-client_id="719980863297-68mj5rs5p6p44lea8fehihimg730i4jb.apps.googleusercontent.com"
-         data-callback="handleCredentialResponse">
-    </div>
+    <h2>Google Login</h2>
     <div class="g_id_signin" data-type="standard"></div>
 
     <script>
-        function handleCredentialResponse(response) {
-            const id_token = response.credential;
-            console.log("ID Token: ", id_token);
-            
-            fetch('/api/auth/login-google', {
+        function onSignIn(googleUser) {
+            const id_token = googleUser.getAuthResponse().id_token;
+            console.log('ID Token: ' + id_token);
+
+            // أرسل الـ ID Token إلى الـ backend
+            fetch('http://localhost:5099/api/auth/login-google', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -27,7 +26,7 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data); 
+                    console.log('Response from backend:', data);
                 })
                 .catch((error) => {
                     console.error('Error:', error);

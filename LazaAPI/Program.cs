@@ -60,7 +60,7 @@ namespace LazaAPI
 			{
 				corsOptions.AddPolicy("MyPolicy", policyBuilder =>
 				{
-					policyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+					policyBuilder.WithOrigins("http://localhost:5099").AllowAnyHeader().AllowAnyMethod();
 				});
 			});
 			builder.Services.AddAuthorization(options =>
