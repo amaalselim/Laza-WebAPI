@@ -23,15 +23,11 @@ namespace LazaProject.persistence.Data
 		public DbSet<Category> categories{ get; set; }
 		public DbSet<Product> products{ get; set; }
 		public DbSet<productImage> productImages{ get; set; }
+		public DbSet<WishListItem> wishListItems{ get; set; }
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			//optionsBuilder.UseSqlServer("Server=db9471.public.databaseasp.net; Database=db9471; User Id=db9471; Password=Ed5_9+mDP4=g; Encrypt=False; MultipleActiveResultSets=True;");
 			optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=LazaAPI;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
-		}
-		protected override void OnModelCreating(ModelBuilder builder)
-		{
-			base.OnModelCreating(builder);
-		
 		}
 
 	}
