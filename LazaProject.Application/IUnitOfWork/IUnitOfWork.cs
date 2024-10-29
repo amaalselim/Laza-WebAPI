@@ -11,9 +11,14 @@ namespace LazaProject.Application.IUnitOfWork
 {
     public interface IUnitOfWork : IDisposable
 	{
+
 		IRepository<ApplicationUser> Users { get; }
+		IRepository<Category> Category { get; }
+		IProductRepository Product{ get; }
+		IProductImageRepository ProductImage{ get; }
 		IAuthRepo AuthRepo { get; }
 		IEmailService EmailService { get; }
+		IImageService ImageService { get; }
 		
 		Task<int> CompleteAsync();
 	}
