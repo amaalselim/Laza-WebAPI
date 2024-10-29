@@ -16,22 +16,35 @@ namespace LazaProject.persistence.UnitOfWork
         private readonly ApplicationDbContext _context;
 
         public IRepository<ApplicationUser> Users { get; private set; }
+        
         public IAuthRepo AuthRepo { get; private set; }
         public IEmailService EmailService { get; private set; }
 
+		public IRepository<Category> Category { get; private set; }
 
-		public UnitOfWork(ApplicationDbContext context, IRepository<ApplicationUser> UserRepo, IAuthRepo authRepo,IEmailService emailService)
+		public IProductRepository Product { get; private set; }
+
+		public IImageService ImageService { get; private set; }
+
+		public IProductImageRepository ProductImage { get; private set; }
+
+		public UnitOfWork(ApplicationDbContext context, IRepository<ApplicationUser> UserRepo, IAuthRepo authRepo,IEmailService emailService,IRepository<Category> cat , IProductRepository pro,IImageService imageService,IProductImageRepository productimg)
         {
             _context = context;
             Users = UserRepo;
 			EmailService = emailService;
             AuthRepo = authRepo;
+            Category = cat;
+            Product = pro;
+            ImageService = imageService;
+            ProductImage = productimg;
         }
 
         public async Task<int> CompleteAsync()
         {
             return await _context.SaveChangesAsync();
         }
+
 
         public void Dispose()
         {

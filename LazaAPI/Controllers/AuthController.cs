@@ -1,6 +1,7 @@
 ﻿using LazaProject.Application.IRepository;
 using LazaProject.Application.IUnitOfWork;
 using LazaProject.Core.DTO_S;
+using LazaProject.Core.Enums;
 using LazaProject.persistence.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -24,9 +25,22 @@ namespace LazaAPI.Controllers
 		[HttpGet("All-Users")]
 		public async Task<IActionResult> getAllUsers()
 		{
-			var user=await _unitOfWork.Users.GetAllAsync();
+			var user = await _unitOfWork.Users.GetAllAsync();
 			return Ok(user);
 		}
+
+
+		/*[HttpDelete("{id}",Name="Delete-User")]
+		public async Task<IActionResult> DeleteUser(string id)
+		{
+			var user = _unitOfWork.Users.DeleteAsync(id);
+			if (user == null)
+			{
+				return BadRequest("User Not Found");
+			}
+			return Ok(user);
+		}*/
+
 
 		[HttpPost("Register")]
 		public async Task<IActionResult> Register(RegisterDTO registerDTO)

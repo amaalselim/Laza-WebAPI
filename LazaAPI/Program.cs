@@ -19,6 +19,10 @@ using LazaProject.persistence.Services;
 using LazaProject.Application.IServices;
 using LazaProject.persistence.UnitOfWork;
 using LazaProject.Core.Enums;
+using Autofac.Core;
+using Microsoft.AspNetCore.Http.Features;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace LazaAPI
 {
@@ -44,12 +48,12 @@ namespace LazaAPI
 				smtpSettings["Password"]
 			));
 
-
-
-
-
 			builder.Services.AddScoped<IRepository<ApplicationUser>, UserRepository>();
 			builder.Services.AddScoped<IAuthRepo, AuthRepository>();
+			builder.Services.AddScoped<IProductRepository,productRepository>();
+			builder.Services.AddScoped<IRepository<Category>, CategoryRepository>();
+			builder.Services.AddScoped<IProductImageRepository,productImageRepository>();
+			builder.Services.AddScoped<IImageService, ImageService>();
 			builder.Services.AddScoped<AuthService>();
 
 			builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
@@ -60,7 +64,7 @@ namespace LazaAPI
 			{
 				corsOptions.AddPolicy("MyPolicy", policyBuilder =>
 				{
-					policyBuilder.WithOrigins("http://localhost:5099").AllowAnyHeader().AllowAnyMethod();
+					policyBuilder.WithOrigins("http://localhost:5099", "http://laza.runasp.net").AllowAnyHeader().AllowAnyMethod();
 				});
 			});
 			builder.Services.AddAuthorization(options =>
@@ -109,63 +113,72 @@ namespace LazaAPI
 
 
 
-
+			builder.Services.Configure<FormOptions>(options =>
+			{
+				options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // 10MB
+			});
 			// Add services to the container.
 
 			builder.Services.AddControllers();
-			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 
 			/*-----------------------------Swagger Part-----------------------------*/
 			#region Swagger REgion
-			//builder.Services.AddSwaggerGen();
 
-			builder.Services.AddSwaggerGen(swagger =>
+			// إضافة خدمات Swagger
+			builder.Services.AddSwaggerGen(c =>
 			{
-				//This�is�to�generate�the�Default�UI�of�Swagger�Documentation����
-				swagger.SwaggerDoc("v1", new OpenApiInfo
+				c.SwaggerDoc("v1", new OpenApiInfo { Title = "Laza API", Version = "v1" });
+
+				// Add support for bearer token authentication
+				c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
 				{
-					Version = "v1",
-					Title = "ASP.NET�5�Web�API",
-				});
-				//�To�Enable�authorization�using�Swagger�(JWT)����
-				swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
-				{
-					Name = "Authorization",
-					Type = SecuritySchemeType.ApiKey,
-					Scheme = "Bearer",
-					BearerFormat = "JWT",
 					In = ParameterLocation.Header,
-					Description = "Enter�'Bearer'�[space]�and�then�your�valid�token�in�the�text�input�below.\r\n\r\nExample:�\"Bearer�eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
+					Description = "Please enter 'Bearer' followed by a space and the token.",
+					Name = "Authorization",
+					Type = SecuritySchemeType.ApiKey
 				});
-				swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+				c.AddSecurityRequirement(new OpenApiSecurityRequirement
+	{
+		{ new OpenApiSecurityScheme
+			{
+				Reference = new OpenApiReference
 				{
-					{
-					new OpenApiSecurityScheme
-					{
-					Reference = new OpenApiReference
-					{
 					Type = ReferenceType.SecurityScheme,
 					Id = "Bearer"
-					}
-					},
-					new string[] {}
-					}
-					});
+				}
+			},
+			new string[] {}
+		}
+	});
 			});
+
 			#endregion
 
 			var app = builder.Build();
 
 			// Configure the HTTP request pipeline.
-			if (app.Environment.IsDevelopment())
+			/*if (app.Environment.IsDevelopment())
 			{
 				app.UseSwagger();
-				app.UseSwaggerUI();
-			}
+				app.UseSwaggerUI(c =>
+				{
+					c.SwaggerEndpoint("/swagger/v1/swagger.json", "Laza API V1");
+				});
+			}*/
+			// Enable Swagger in all environments
+			app.UseSwagger();
+			app.UseSwaggerUI(c =>
+			{
+				c.SwaggerEndpoint("/swagger/v1/swagger.json", "Laza API V1");
 
-			
+			});
+
+
+
+
+
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
 
