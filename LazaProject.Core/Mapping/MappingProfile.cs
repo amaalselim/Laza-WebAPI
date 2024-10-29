@@ -24,6 +24,11 @@ namespace LazaProject.Core.Mapping
 			.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
 			.ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images.Select(img => new productImage { Image = img }).ToList()));
 
+			CreateMap<WishListItem, WishListItemDTO>()
+			.ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+			.ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product.Price));
+			CreateMap<WishListItemDTO, WishListItem>();
+
 		}
 
 
