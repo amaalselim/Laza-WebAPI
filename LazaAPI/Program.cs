@@ -54,6 +54,7 @@ namespace LazaAPI
 			builder.Services.AddScoped<IRepository<Category>, CategoryRepository>();
 			builder.Services.AddScoped<IProductImageRepository,productImageRepository>();
 			builder.Services.AddScoped<IImageService, ImageService>();
+			builder.Services.AddScoped<IWishListItemRepository, WishListItemRepository>();
 			builder.Services.AddScoped<AuthService>();
 
 			builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
@@ -119,7 +120,12 @@ namespace LazaAPI
 			});
 			// Add services to the container.
 
-			builder.Services.AddControllers();
+			builder.Services.AddControllers()
+			.AddJsonOptions(options =>
+			{
+				options.JsonSerializerOptions.PropertyNamingPolicy = null; // Customize as needed
+			});
+
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 
