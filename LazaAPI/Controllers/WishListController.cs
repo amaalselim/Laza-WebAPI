@@ -31,7 +31,7 @@ namespace LazaAPI.Controllers
 			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 			if (string.IsNullOrWhiteSpace(userId))
 			{
-				return Unauthorized("User not authenticated.");
+				return Unauthorized(new { message = "Please log in to continue." });
 			}
 			wishListItemDTO.UserId = userId;
 			var result = await _unitOfWork.WishListItemRepository.AddToWishListAsync(wishListItemDTO.UserId, wishListItemDTO.ProductId);
