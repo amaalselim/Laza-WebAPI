@@ -37,29 +37,47 @@ namespace LazaProject.persistence.Services
 			{
 				base64Image = base64Image.Substring("data:image/jpeg;base64,".Length);
 			}
+			else if (base64Image.StartsWith("data:image/png;base64,")) 
+			{
+				base64Image = base64Image.Substring("data:image/png;base64,".Length);
+			}
 
 			if (string.IsNullOrEmpty(base64Image))
 			{
 				throw new FormatException("The provided Base64 string is empty after removing the header.");
 			}
 
-			byte[] imageBytes = Convert.FromBase64String(base64Image);
-
-			string folderPath = Path.Combine(_webHostEnvironment.WebRootPath, folderName);
-
-			if (!Directory.Exists(folderPath))
+			try
 			{
-				Directory.CreateDirectory(folderPath);
+				byte[] imageBytes = Convert.FromBase64String(base64Image);
+
+				string folderPath = Path.Combine(_webHostEnvironment.WebRootPath, folderName);
+
+				if (!Directory.Exists(folderPath))
+				{
+					Directory.CreateDirectory(folderPath);
+				}
+
+				string fileName = $"{Guid.NewGuid()}.jpg"; 
+				string filePath = Path.Combine(folderPath, fileName);
+
+				await File.WriteAllBytesAsync(filePath, imageBytes);
+
+				return filePath;
 			}
+			catch (FormatException ex)
+			{
 
-			string fileName = $"{Guid.NewGuid()}.jpg";
-			string filePath = Path.Combine(folderPath, fileName);
+				throw new Exception("Invalid Base64 string provided.", ex);
+			}
+			catch (Exception ex)
+			{
 
-			await File.WriteAllBytesAsync(filePath, imageBytes);
-
-			return filePath;
+				throw new Exception("Error saving image.", ex);
+			}
 		}
-	public async Task<string> SaveImageAsync(IFormFile Img, string folderPath)
+
+		public async Task<string> SaveImageAsync(IFormFile Img, string folderPath)
 		{
 			if (Img == null || Img.Length == 0)
 			{
@@ -77,5 +95,6 @@ namespace LazaProject.persistence.Services
 
 			return Path.Combine(folderPath, fileName + extension);
 		}
+
 	}
 }
