@@ -150,10 +150,10 @@ namespace LazaProject.persistence.Repository
 
 		public async Task<IdentityResult> RegisterAsync(RegisterDTO registerDTO)
 		{
-			if(!await IsEmailValid(registerDTO.Email))
-			{
-				return IdentityResult.Failed(new IdentityError { Description = "Email Is Not Valid , Please Enter a Valid Email." });
-			}
+			//if(!await IsEmailValid(registerDTO.Email))
+			//{
+			//	return IdentityResult.Failed(new IdentityError { Description = "Email Is Not Valid , Please Enter a Valid Email." });
+			//}
 			var user= _mapper.Map<ApplicationUser>(registerDTO);
 			return await _userManager.CreateAsync(user, registerDTO.Password);
 

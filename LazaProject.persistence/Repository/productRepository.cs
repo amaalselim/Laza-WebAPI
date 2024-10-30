@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using LazaProject.Application.IRepository;
+using LazaProject.Core.DTO_S;
+using LazaProject.Core.Enums;
 using LazaProject.Core.Models;
 using LazaProject.persistence.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -38,8 +40,7 @@ namespace LazaProject.persistence.Repository
 
 		public async Task<IEnumerable<Product>> GetAllAsync()
 		{
-			List<Product> pro = await _context.products.ToListAsync();
-			return pro;
+			return await _context.products.ToListAsync();
 
 		}
 
@@ -60,6 +61,22 @@ namespace LazaProject.persistence.Repository
 			return pro;
 		}
 
+		public async Task<IEnumerable<Product>> GetAllProAsync(Gender? userGender)
+		{
+			if (userGender == Gender.Men)
+			{
+				return await _context.products.Where(p => p.type == ProductType.Men).ToListAsync();
+			}
+			else if (userGender == Gender.Women)
+			{
+				return await _context.products.Where(p => p.type == ProductType.Women).ToListAsync();
+			}
+			else
+			{
+				return await _context.products.ToListAsync();
+			}
+		}
+
 		public async Task<IEnumerable<Product>> GetAllProductByCategoryIdAsync(string categoryid)
 		{
 			return await _context.products.Include(p=>p.Category)
@@ -75,26 +92,44 @@ namespace LazaProject.persistence.Repository
 			return product;
 		}
 
-		public async Task<Product> GetImagesByProductIdAsync(string id)
+		public async Task<ProductDetailsDTO> GetImagesByProductIdAsync(string id)
 		{
 			var product = await _context.products
 				.AsNoTracking()
-				.Include(p => p.Images).Include(p => p.Category)
+				.Include(p => p.Images)
+				.Include(p => p.Category)
+				.Include(p => p.Reviews) 
 				.FirstOrDefaultAsync(p => p.Id == id);
 
 			if (product == null)
 			{
 				return null;
 			}
-			product.Images = product.Images.Where(img => !img.Image
-				.StartsWith("data:image")).Select(img => new productImage
+			var productdetails = new ProductDetailsDTO
+			{
+				Id = product.Id,
+				Name = product.Name,
+				Images = product.Images.Where(img => !img.Image.StartsWith("data:image"))
+				.Select(img => new ProductImgDTO
 				{
 					Image = img.Image,
 					ProductId = product.Id,
 					ProductName = product.Name
-				}).ToList();
+				}).ToList(),
+				Reviews = product.Reviews.Select(r => new ReviewDTO
+				{
+					UserId = r.UserId,
+					Feedback = r.Feedback,
+					Rating = r.Rating
+				}).ToList()
+			};
+			return productdetails;
+		}
 
-			return product;
+
+		public async Task<IEnumerable<Product>> GetProductsSortedByPrice()
+		{
+			return await _context.products.OrderBy(p => p.Price).ToListAsync();
 		}
 
 		public async Task<IEnumerable<Product>> SearchProductAsync(string searchTerm)
@@ -109,5 +144,6 @@ namespace LazaProject.persistence.Repository
 			_context.products.Update(product);
 			await _context.SaveChangesAsync();
 		}
+
 	}
 }

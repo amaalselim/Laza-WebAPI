@@ -30,7 +30,9 @@ namespace LazaProject.persistence.UnitOfWork
 
 		public IWishListItemRepository WishListItemRepository { get; private set; }
 
-		public UnitOfWork(ApplicationDbContext context, IRepository<ApplicationUser> UserRepo, IAuthRepo authRepo,IEmailService emailService,IRepository<Category> cat , IProductRepository pro,IImageService imageService,IProductImageRepository productimg,IWishListItemRepository wishListItem )
+		public IReviewRepository ReviewRepository { get; private set; }
+
+		public UnitOfWork(ApplicationDbContext context, IRepository<ApplicationUser> UserRepo, IAuthRepo authRepo,IEmailService emailService,IRepository<Category> cat , IProductRepository pro,IImageService imageService,IProductImageRepository productimg,IWishListItemRepository wishListItem ,IReviewRepository reviewRepository)
         {
             _context = context;
             Users = UserRepo;
@@ -41,6 +43,7 @@ namespace LazaProject.persistence.UnitOfWork
             ImageService = imageService;
             ProductImage = productimg;
             WishListItemRepository = wishListItem;
+            ReviewRepository = reviewRepository;
         }
 
         public async Task<int> CompleteAsync()

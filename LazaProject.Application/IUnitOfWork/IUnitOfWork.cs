@@ -21,6 +21,7 @@ namespace LazaProject.Application.IUnitOfWork
 		IImageService ImageService { get; }
 		
 		IWishListItemRepository WishListItemRepository { get; }
+		IReviewRepository ReviewRepository { get; }
 		Task<int> CompleteAsync();
 	}
 }
