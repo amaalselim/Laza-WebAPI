@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace LazaAPI.Controllers
+
 {
 	[Route("api/[controller]")]
 	[ApiController]
