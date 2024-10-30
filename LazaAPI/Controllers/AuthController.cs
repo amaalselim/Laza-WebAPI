@@ -2,11 +2,13 @@
 using LazaProject.Application.IUnitOfWork;
 using LazaProject.Core.DTO_S;
 using LazaProject.Core.Enums;
+using LazaProject.Core.Models;
 using LazaProject.persistence.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using System.Security.Claims;
 
 namespace LazaAPI.Controllers
 {
@@ -148,8 +150,9 @@ namespace LazaAPI.Controllers
 
 			return BadRequest(new { message = "Invalid Twitter login." });
 		}
-
+		
 		[HttpPost("assign-role")]
+		//[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> AssignRole([FromBody] AssignRoleDto assignRoleDto)
 		{
 			if (assignRoleDto == null) return BadRequest();
@@ -160,6 +163,22 @@ namespace LazaAPI.Controllers
 
 			}
 			return Ok("Role assigned successfully.");
+		}
+		[HttpPost("User/SetGender")]
+		public async Task<IActionResult> SetGender([FromBody] GenderDTO genderDto)
+		{
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var user = await _unitOfWork.Users.GetByIdAsync(userId);
+
+			if (user == null)
+			{
+				return NotFound("User not found");
+			}
+
+			user.Gender = genderDto.Gender;
+			await _unitOfWork.CompleteAsync();
+
+			return Ok("Gender updated successfully");
 		}
 
 
