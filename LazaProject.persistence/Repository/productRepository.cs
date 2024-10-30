@@ -77,11 +77,31 @@ namespace LazaProject.persistence.Repository
 			}
 		}
 
-		public async Task<IEnumerable<Product>> GetAllProductByCategoryIdAsync(string categoryid)
+		public async Task<IEnumerable<Product>> GetAllProductByCategoryIdAsync(string categoryid,Gender? gender)
 		{
-			return await _context.products.Include(p=>p.Category)
-				.Where(p=>p.CategoryId==categoryid)
+			if (gender == Gender.Men)
+			{
+				return await _context.products.Include(p => p.Category)
+				.Where(p => p.CategoryId == categoryid)
+				.Where(p=>p.type==ProductType.Men)
 				.ToListAsync();
+			}
+			else if (gender== Gender.Women)
+			{
+				return await _context.products.Include(p => p.Category)
+				.Where(p => p.CategoryId == categoryid)
+				.Where(p => p.type == ProductType.Women)
+				.ToListAsync();
+			}
+			else
+			{
+				return await _context.products.Include(p => p.Category)
+				.Where(p => p.CategoryId == categoryid)
+				.ToListAsync();
+			}
+			
+
+
 
 		}
 
