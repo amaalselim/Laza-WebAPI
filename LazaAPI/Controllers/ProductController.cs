@@ -42,7 +42,15 @@ namespace LazaAPI.Controllers
 		[HttpGet("category/{categoryId}")]
 		public async Task<IActionResult> GetProductsByCategory(string categoryId)
 		{
-			var products = await _unitOfWork.Product.GetAllProductByCategoryIdAsync(categoryId);
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var user = await _unitOfWork.Users.GetByIdAsync(userId);
+
+			if (user == null)
+			{
+				return NotFound("User not found.");
+			}
+
+			var products = await _unitOfWork.Product.GetAllProductByCategoryIdAsync(categoryId,user?.Gender);
 
 			if (!products.Any())
 			{
@@ -208,6 +216,8 @@ namespace LazaAPI.Controllers
 
 			return Ok(products);
 		}
+		
+
 
 	}
 }
