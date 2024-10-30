@@ -19,7 +19,7 @@ namespace LazaAPI.Controllers
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly AuthService _authService;
 
-		public AuthController(IUnitOfWork unitOfWork,AuthService authService)
+		public AuthController(IUnitOfWork unitOfWork, AuthService authService)
 		{
 			_unitOfWork = unitOfWork;
 			_authService = authService;
@@ -69,21 +69,21 @@ namespace LazaAPI.Controllers
 		[HttpPost("reset-password")]
 		public async Task<IActionResult> ResetPassword(ForgetPasswordDTO forgetPasswordDTO)
 		{
-			var token=await _unitOfWork.AuthRepo.GeneratePasswordResetTokenAsync(forgetPasswordDTO);
-			if (token==null)
+			var token = await _unitOfWork.AuthRepo.GeneratePasswordResetTokenAsync(forgetPasswordDTO);
+			if (token == null)
 			{
 				return BadRequest("Failed to generate reset token.");
 			}
 
 			try
 			{
-				
+
 				await _unitOfWork.AuthRepo.SendResetPasswordEmailAsync(forgetPasswordDTO.Email);
 				return Ok(new { message = "Reset password email sent successfully." });
 			}
 			catch (Exception ex)
 			{
-		
+
 				return StatusCode(500, $"Failed to send email: {ex.Message}");
 			}
 
@@ -95,7 +95,7 @@ namespace LazaAPI.Controllers
 			{
 				return BadRequest(ModelState);
 			}
-			var result=await _unitOfWork.AuthRepo.UpdatePasswordAsync(updatePasswordDTO);
+			var result = await _unitOfWork.AuthRepo.UpdatePasswordAsync(updatePasswordDTO);
 			if (result.Succeeded)
 			{
 				return Ok(new { Message = "Password updated successfully." });
@@ -104,7 +104,7 @@ namespace LazaAPI.Controllers
 			{
 				return BadRequest(result.Errors);
 			}
-			
+
 		}
 
 		[HttpPost("logout")]
@@ -150,13 +150,13 @@ namespace LazaAPI.Controllers
 
 			return BadRequest(new { message = "Invalid Twitter login." });
 		}
-		
+
 		[HttpPost("assign-role")]
 		//[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> AssignRole([FromBody] AssignRoleDto assignRoleDto)
 		{
 			if (assignRoleDto == null) return BadRequest();
-			var result=await _unitOfWork.AuthRepo.AssignRoleAsync(assignRoleDto);
+			var result = await _unitOfWork.AuthRepo.AssignRoleAsync(assignRoleDto);
 			if (!result)
 			{
 				return NotFound("User Not Found or Could not assign role.");
@@ -164,25 +164,16 @@ namespace LazaAPI.Controllers
 			}
 			return Ok("Role assigned successfully.");
 		}
-		[HttpPost("User/SetGender")]
-		public async Task<IActionResult> SetGender([FromBody] GenderDTO genderDto)
+		[HttpGet("genders")]
+		public IActionResult GetGenders()
 		{
-			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-			var user = await _unitOfWork.Users.GetByIdAsync(userId);
+			var genders = Enum.GetValues(typeof(Gender))
+							  .Cast<Gender>()
+							  .Select(g => new { Id = g.ToString(), Name = g.ToString() })
+							  .ToList();
 
-			if (user == null)
-			{
-				return NotFound("User not found");
-			}
-
-			user.Gender = genderDto.Gender;
-			await _unitOfWork.CompleteAsync();
-
-			return Ok("Gender updated successfully");
+			return Ok(genders);
 		}
 
-
-
 	}
-
 }
