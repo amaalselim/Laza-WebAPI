@@ -1,7 +1,6 @@
 ﻿
 using LazaProject.Application.IRepository;
 using LazaProject.Application.IUnitOfWork;
-using LazaProject.Core.Mapping;
 using LazaProject.Core.Models;
 using LazaProject.persistence.Data;
 using LazaProject.persistence.Repository;
@@ -56,6 +55,7 @@ namespace LazaAPI
 			builder.Services.AddScoped<IImageService, ImageService>();
 			builder.Services.AddScoped<IWishListItemRepository, WishListItemRepository>();
 			builder.Services.AddScoped<AuthService>();
+			builder.Services.AddScoped<IReviewRepository, ReviewRepository>();	
 
 			builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 			builder.Services.AddAutoMapper(typeof(MappingProfile));
