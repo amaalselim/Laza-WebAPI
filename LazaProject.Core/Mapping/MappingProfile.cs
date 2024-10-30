@@ -8,7 +8,9 @@ public class MappingProfile : Profile
 	public MappingProfile()
 	{
 		CreateMap<RegisterDTO, ApplicationUser>()
-			.ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
+			.ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
+			.ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender));
+
 
 		CreateMap<Product, ProductDTO>()
 			.ForMember(dest => dest.ProductType, opt => opt.MapFrom(src => src.type));
