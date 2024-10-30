@@ -361,3 +361,5 @@ MigrationBackup/
 
 appsettings.json
 
+/LazaAPI/wwwroot/Images/Products/Small
+/LazaAPI/wwwroot/Images/Products
