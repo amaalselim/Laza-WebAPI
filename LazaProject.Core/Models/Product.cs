@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LazaProject.Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -25,6 +26,8 @@ namespace LazaProject.Core.Models
 		[ForeignKey("Category")]
 		public string CategoryId { get; set; }
 		public Category? Category { get; set; }
+		public ProductType type { get; set; }
 		public ICollection<productImage> Images { get; set; } = new List<productImage>(); 
+		public ICollection<Reviews> Reviews { get; set; }= new List<Reviews>();	
 	}
 }

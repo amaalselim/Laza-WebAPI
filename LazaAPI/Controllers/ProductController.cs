@@ -3,9 +3,12 @@ using LazaProject.Application.IServices;
 using LazaProject.Application.IUnitOfWork;
 using LazaProject.Core.DTO_S;
 using LazaProject.Core.Models;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Numerics;
+using System.Security.Claims;
 
 namespace LazaAPI.Controllers
 {
@@ -26,7 +29,14 @@ namespace LazaAPI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> ViewAllProduct()
 		{
-			var product = await _unitOfWork.Product.GetAllAsync();
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var user = await _unitOfWork.Users.GetByIdAsync(userId);
+
+			if (user == null)
+			{
+				return NotFound("User not found.");
+			}
+			var product = await _unitOfWork.Product.GetAllProAsync(user?.Gender);
 			return Ok(product);
 		}
 		[HttpGet("category/{categoryId}")]
@@ -53,32 +63,33 @@ namespace LazaAPI.Controllers
 			return Ok(product);
 		}
 		[HttpPost]
-		public async Task<IActionResult> CreateProduct([FromBody] ProductDTO productDTO)
+		public async Task<IActionResult> CreateProduct([FromForm] ProductDTO productDTO)
 		{
 			if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
 			}
+
 			var product = _mapper.Map<Product>(productDTO);
 
-			if (!string.IsNullOrEmpty(product.Img))
+			if (productDTO.Img != null)
 			{
 				var path = @"Images/Products/";
-				product.Img = await _imageService.SaveBase64ImageAsync(product.Img, path);
+				product.Img = await _imageService.SaveImageAsync(productDTO.Img, path); 
 			}
 
 			await _unitOfWork.Product.AddAsync(product);
 
-			if (product.Images != null && product.Images.Count > 0)
+			if (productDTO.Images != null && productDTO.Images.Count > 0)
 			{
 				List<productImage> imagesToAdd = new List<productImage>();
 
-				foreach (var smallImg in product.Images)
+				foreach (var smallImg in productDTO.Images)
 				{
-					if (!string.IsNullOrEmpty(smallImg.Image))
+					if (smallImg != null)
 					{
 						var smallImgPath = @"Images/Products/Small/";
-						var smallImgUrl = await _imageService.SaveBase64ImageAsync(smallImg.Image, smallImgPath);
+						var smallImgUrl = await _imageService.SaveImageAsync(smallImg, smallImgPath);
 
 						imagesToAdd.Add(new productImage
 						{
@@ -90,17 +101,17 @@ namespace LazaAPI.Controllers
 
 				await _unitOfWork.ProductImage.AddRangeAsync(imagesToAdd);
 			}
+
 			return Ok(new
 			{
-				Message = "Product Created successfully!",
-				NewData = product.Images.Where(img => !img.Image.StartsWith("data:image"))
+				Message = "Product created successfully!",
+				NewData = product.Images
 			});
 		}
 
+
 		[HttpPut("{id}")]
-		public async Task<IActionResult> EditProduct(
-		string id,
-		[FromBody] ProductDTO productDTO)
+		public async Task<IActionResult> EditProduct(string id, [FromForm] ProductDTO productDTO)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -114,32 +125,32 @@ namespace LazaAPI.Controllers
 				return NotFound();
 			}
 
-			// Store old product data
-			var oldProductData = _mapper.Map<ProductDTO>(product);
+			var oldProductImg = product.Img; 
 
-			// Map new product data
 			_mapper.Map(productDTO, product);
 
-			// Image handling
-			if (!string.IsNullOrEmpty(productDTO.Img))
+			if (productDTO.Img != null)
 			{
-				if (!string.IsNullOrEmpty(oldProductData.Img))
+				if (!string.IsNullOrEmpty(oldProductImg))
 				{
-					await _imageService.DeleteFileAsync(oldProductData.Img);
+					await _imageService.DeleteFileAsync(oldProductImg);
 				}
 				var path = @"Images/Products/";
-				product.Img = await _imageService.SaveBase64ImageAsync(productDTO.Img, path);
+				product.Img = await _imageService.SaveImageAsync(productDTO.Img, path);
 			}
-			if (product.Images != null && product.Images.Count > 0)
+
+			if (productDTO.Images != null && productDTO.Images.Count > 0)
 			{
 				List<productImage> imagesToAdd = new List<productImage>();
 
-				foreach (var smallImg in product.Images)
+				foreach (var smallImg in productDTO.Images)
 				{
-					if (!string.IsNullOrEmpty(smallImg.Image))
+					if (smallImg != null)
 					{
+						await _imageService.DeleteFileAsync(smallImg.ToString());
+						productDTO.Img = null;
 						var smallImgPath = @"Images/Products/Small/";
-						var smallImgUrl = await _imageService.SaveBase64ImageAsync(smallImg.Image, smallImgPath);
+						var smallImgUrl = await _imageService.SaveImageAsync(smallImg, smallImgPath);
 
 						imagesToAdd.Add(new productImage
 						{
@@ -151,17 +162,16 @@ namespace LazaAPI.Controllers
 
 				await _unitOfWork.ProductImage.AddRangeAsync(imagesToAdd);
 			}
+
 			await _unitOfWork.Product.UpdateAsync(product);
 
 			return Ok(new
 			{
 				Message = "Product updated successfully!",
-				NewData = product.Images.Where(img => !img.Image.StartsWith("data:image"))
+				NewData = product.Images
 			});
-
-
-
 		}
+
 
 
 		[HttpDelete("{id}")]
@@ -183,6 +193,17 @@ namespace LazaAPI.Controllers
 			if (!products.Any())
 			{
 				return NotFound("No products found matching the search term.");
+			}
+
+			return Ok(products);
+		}
+		[HttpGet("Sorted")]
+		public async Task<IActionResult> GetProductsSortedByPrice()
+		{
+			var products = await _unitOfWork.Product.GetProductsSortedByPrice();
+			if (products == null || !products.Any())
+			{
+				return NotFound("No products found.");
 			}
 
 			return Ok(products);
