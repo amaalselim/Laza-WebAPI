@@ -19,6 +19,7 @@ namespace LazaProject.Application.IUnitOfWork
 		IAuthRepo AuthRepo { get; }
 		IEmailService EmailService { get; }
 		IImageService ImageService { get; }
+		ICartRepository cartRepository { get; }
 		
 		IWishListItemRepository WishListItemRepository { get; }
 		IReviewRepository ReviewRepository { get; }
