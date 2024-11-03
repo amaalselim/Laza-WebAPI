@@ -4,6 +4,7 @@ using LazaProject.Core.DTO_S;
 using LazaProject.Core.Enums;
 using LazaProject.Core.Models;
 using LazaProject.persistence.Services;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -105,6 +106,20 @@ namespace LazaAPI.Controllers
 				return BadRequest(result.Errors);
 			}
 
+		}
+		[HttpPost("verify-code")]
+		public async Task<IActionResult> VerifyCode([FromBody]VerficationCodeDTO verficationCodeDTO)
+		{
+			var user = await _unitOfWork.AuthRepo.FindByEmailAsync(verficationCodeDTO.email);
+			if (user == null)
+			{
+				return BadRequest(new { error = "User not found." });
+			}
+			if (user.VerificationCode.ToString() != verficationCodeDTO.code)
+			{
+				return BadRequest(new { error = "Invalid verification code." });
+			}
+			return Ok(new { message = "Verification successful." });
 		}
 
 		[HttpPost("logout")]

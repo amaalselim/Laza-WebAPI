@@ -191,8 +191,10 @@ namespace LazaProject.persistence.Repository
 		{
 			await _manager.SignOutAsync();
 		}
-
 		
+			
+
+
 		public async Task<IdentityResult> UpdatePasswordAsync(UpdatePasswordDTO updatePasswordDTO)
 		{
 			var user= await _userManager.FindByEmailAsync(updatePasswordDTO.Email);
@@ -200,10 +202,7 @@ namespace LazaProject.persistence.Repository
 			{
 				return IdentityResult.Failed(new IdentityError { Description = "User not found." });
 			}
-			if (user.VerificationCode.ToString() != updatePasswordDTO.VerificationCode)
-			{
-				return IdentityResult.Failed(new IdentityError { Description = "User not found." });
-			}
+			
 			var token=await _userManager.GeneratePasswordResetTokenAsync(user);
 			var result=await _userManager.ResetPasswordAsync(user,token,updatePasswordDTO.NewPassword);
 
@@ -375,8 +374,10 @@ namespace LazaProject.persistence.Repository
 			return result.Succeeded;
 		}
 
-
-
+		public async Task<ApplicationUser> FindByEmailAsync(string email)
+		{
+			return await _userManager.FindByEmailAsync(email);
+		}
 	}
 
 }

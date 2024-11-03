@@ -11,7 +11,7 @@ namespace LazaProject.Application.IRepository
 {
     public interface IAuthRepo
 	{
-		
+		Task<ApplicationUser> FindByEmailAsync(string email);
 		Task<IdentityResult> RegisterAsync (RegisterDTO registerDTO);
 		Task<object> LoginAsync (LoginDTO loginDTO);
 		Task<string> GeneratePasswordResetTokenAsync(ForgetPasswordDTO forgetPasswordDTO);

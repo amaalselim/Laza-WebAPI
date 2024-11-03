@@ -13,8 +13,6 @@ namespace LazaProject.Core.DTO_S
 		[EmailAddress(ErrorMessage = "Invalid email format.")]
 		public string Email { get; set; }
 
-		[Required(ErrorMessage = "Verification code is required.")]
-		public string VerificationCode { get; set; }
 
 		[Required(ErrorMessage = "New password is required.")]
 		[StringLength(100, ErrorMessage = "Password must be at least 6 characters long.", MinimumLength = 6)]
