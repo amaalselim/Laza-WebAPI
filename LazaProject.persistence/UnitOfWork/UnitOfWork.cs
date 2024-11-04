@@ -34,7 +34,9 @@ namespace LazaProject.persistence.UnitOfWork
 
 		public ICartRepository cartRepository {  get; private set; }
 
-		public UnitOfWork(ApplicationDbContext context, IRepository<ApplicationUser> UserRepo, IAuthRepo authRepo,IEmailService emailService,IRepository<Category> cat , IProductRepository pro,IImageService imageService,IProductImageRepository productimg,IWishListItemRepository wishListItem ,IReviewRepository reviewRepository,ICartRepository cart)
+		public IAddressRepository AddressRepository {  get; private set; }
+
+		public UnitOfWork(ApplicationDbContext context, IRepository<ApplicationUser> UserRepo, IAuthRepo authRepo,IEmailService emailService,IRepository<Category> cat , IProductRepository pro,IImageService imageService,IProductImageRepository productimg,IWishListItemRepository wishListItem ,IReviewRepository reviewRepository,ICartRepository cart,IAddressRepository addressRepository)
         {
             _context = context;
             Users = UserRepo;
@@ -47,6 +49,7 @@ namespace LazaProject.persistence.UnitOfWork
             WishListItemRepository = wishListItem;
             ReviewRepository = reviewRepository;
             cartRepository = cart;
+            AddressRepository = addressRepository;
         }
 
         public async Task<int> CompleteAsync()

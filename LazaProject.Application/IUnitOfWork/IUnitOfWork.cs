@@ -20,9 +20,9 @@ namespace LazaProject.Application.IUnitOfWork
 		IEmailService EmailService { get; }
 		IImageService ImageService { get; }
 		ICartRepository cartRepository { get; }
-		
 		IWishListItemRepository WishListItemRepository { get; }
 		IReviewRepository ReviewRepository { get; }
+		IAddressRepository AddressRepository { get; }
 		Task<int> CompleteAsync();
 	}
 }
