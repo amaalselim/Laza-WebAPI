@@ -39,6 +39,10 @@ public class MappingProfile : Profile
 			.ForMember(d => d.ProductImg, o => o.MapFrom(src => src.Product.Img))
 			.ForMember(d => d.Price, o => o.MapFrom(src => src.Product.Price));
 		CreateMap<CartItemDTO, CartItem>();
+
+
+		CreateMap<AddressUser, AddressDTO>();
+		CreateMap<AddressDTO, AddressUser>();
 	}
 
 	private List<productImage> MapImages(IEnumerable<IFormFile> images) 
