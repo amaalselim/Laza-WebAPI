@@ -4,6 +4,7 @@ using LazaProject.Core.DTO_S;
 using LazaProject.Core.Enums;
 using LazaProject.Core.Models;
 using LazaProject.persistence.Data;
+using LazaProject.persistence.Migrations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -49,8 +50,7 @@ namespace LazaProject.persistence.Repository
 			List<Product> pro = await _context.products.Include(p => p.Images).Include(p => p.Category).ToListAsync();
 			foreach (var product in pro)
 			{
-				product.Images = product.Images.Where(img => !img.Image
-				.StartsWith("data:image")).Select(img => new productImage
+				product.Images = product.Images.Select(img => new productImage
 				{
 					Image = img.Image,
 					ProductId = product.Id,
@@ -61,45 +61,88 @@ namespace LazaProject.persistence.Repository
 			return pro;
 		}
 
-		public async Task<IEnumerable<Product>> GetAllProAsync(Gender? userGender)
-		{
-			if (userGender == Gender.Men)
+		public async Task<IEnumerable<ProductDetailsDTO>> GetAllProAsync(Gender? gender)
 			{
-				return await _context.products.Where(p => p.type == ProductType.Men).ToListAsync();
-			}
-			else if (userGender == Gender.Women)
-			{
-				return await _context.products.Where(p => p.type == ProductType.Women).ToListAsync();
-			}
-			else
-			{
-				return await _context.products.ToListAsync();
-			}
-		}
+			var query = _context.products.AsNoTracking()
+				.Include(p => p.Images)
+				.Include(p => p.Category)
+				.Include(p => p.Reviews).AsQueryable();
+			if (gender == Gender.Men)
+				{
+					query = query.Where(p => p.type == ProductType.Men);
+				}
+				else if (gender == Gender.Women)
+				{
+					query = query.Where(p => p.type == ProductType.Women);
+				}
+				var products = await query.ToListAsync();
 
-		public async Task<IEnumerable<Product>> GetAllProductByCategoryIdAsync(string categoryid,Gender? gender)
-		{
+				var productDetailsList = products.Select(product => new ProductDetailsDTO
+				{
+					Id = product.Id,
+					Name = product.Name,
+					Images = product.Images.Select(img => new ProductImgDTO
+					{
+						Image = img.Image,
+						ProductId = img.ProductId,
+						ProductName = product.Name
+					}).ToList(),
+					Reviews = product.Reviews.Select(r => new ReviewDTO
+					{
+						UserId = r.UserId,
+						Username=r.UserName,
+						Feedback = r.Feedback,
+						Rating = r.Rating
+					}).ToList()
+				}).ToList();
+
+				return productDetailsList;
+			}
+			public async Task<IEnumerable<ProductDetailsDTO>> GetAllProductByCategoryIdAsync(string categoryid, Gender? gender)
+			{
+			var query = _context.products.AsNoTracking()
+				.Include(p => p.Images)
+				.Include(p => p.Category)
+				.Include(p => p.Reviews)
+				.Where(p => p.CategoryId == categoryid);
+
 			if (gender == Gender.Men)
 			{
-				return await _context.products.Include(p => p.Category)
-				.Where(p => p.CategoryId == categoryid)
-				.Where(p=>p.type==ProductType.Men)
-				.ToListAsync();
+				query = query.Where(p => p.type == ProductType.Men);
 			}
-			else if (gender== Gender.Women)
+			else if (gender == Gender.Women)
 			{
-				return await _context.products.Include(p => p.Category)
-				.Where(p => p.CategoryId == categoryid)
-				.Where(p => p.type == ProductType.Women)
-				.ToListAsync();
+				query = query.Where(p => p.type == ProductType.Women);
 			}
 			else
 			{
-				return await _context.products.Include(p => p.Category)
-				.Where(p => p.CategoryId == categoryid)
-				.ToListAsync();
+				query = query;
 			}
+
+			var products = await query.ToListAsync();
+
+			var productDetailsList = products.Select(product => new ProductDetailsDTO
+			{
+				Id = product.Id,
+				Name = product.Name,
+				Images = product.Images.Select(img => new ProductImgDTO
+				{
+					Image = img.Image,
+					ProductId = img.ProductId,
+					ProductName = product.Name
+				}).ToList(),
+				Reviews = product.Reviews.Select(r => new ReviewDTO
+				{
+					UserId = r.UserId,
+					Username = r.UserName,
+					Feedback = r.Feedback,
+					Rating = r.Rating
+				}).ToList()
+			}).ToList();
+
+			return productDetailsList;
 		}
+
 
 		public async Task<Product> GetByIdAsync(string id)
 		{
@@ -125,7 +168,7 @@ namespace LazaProject.persistence.Repository
 			{
 				Id = product.Id,
 				Name = product.Name,
-				Images = product.Images.Where(img => !img.Image.StartsWith("data:image"))
+				Images = product.Images
 				.Select(img => new ProductImgDTO
 				{
 					Image = img.Image,
@@ -135,6 +178,7 @@ namespace LazaProject.persistence.Repository
 				Reviews = product.Reviews.Select(r => new ReviewDTO
 				{
 					UserId = r.UserId,
+					Username = r.UserName,
 					Feedback = r.Feedback,
 					Rating = r.Rating
 				}).ToList()
@@ -159,6 +203,5 @@ namespace LazaProject.persistence.Repository
 			_context.products.Update(product);
 			await _context.SaveChangesAsync();
 		}
-
 	}
 }
