@@ -9,7 +9,8 @@ namespace LazaProject.Core.DTO_S
 {
 	public class ReviewDTO
 	{
-		public string UserId { get; set; }
+		[JsonIgnore]
+		public string? UserId { get; set; }
 		public string? Username { get; set; }
 		public string Feedback { get; set; }
 		public decimal Rating { get; set; }
