@@ -99,10 +99,6 @@ namespace LazaProject.persistence.Repository
 				.Where(p => p.CategoryId == categoryid)
 				.ToListAsync();
 			}
-			
-
-
-
 		}
 
 		public async Task<Product> GetByIdAsync(string id)
