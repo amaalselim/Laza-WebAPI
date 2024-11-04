@@ -57,6 +57,7 @@ namespace LazaAPI
 			builder.Services.AddScoped<AuthService>();
 			builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 			builder.Services.AddScoped<ICartRepository, CartRepository>();
+			builder.Services.AddScoped<IAddressRepository,AddressRepository>();
 
 			builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 			builder.Services.AddAutoMapper(typeof(MappingProfile));
