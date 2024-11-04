@@ -151,9 +151,8 @@ namespace LazaProject.persistence.Repository
 		public async Task<IEnumerable<Product>> SearchProductAsync(string searchTerm)
 		{
 			var lowersearchterm=searchTerm.ToLower();
-			return await _context.products.Include(p => p.Category)
-				.Where(p => p.Name.ToLower().StartsWith(lowersearchterm) || 
-				p.Category.Name.ToLower().StartsWith(lowersearchterm)).ToListAsync();
+			return await _context.products
+				.Where(p => p.Name.ToLower().StartsWith(lowersearchterm)).ToListAsync();
 		}
 		public async Task UpdateAsync(Product product)
 		{

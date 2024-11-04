@@ -1,6 +1,6 @@
 ﻿using LazaProject.Application.IServices;
 using LazaProject.Application.IUnitOfWork;
-using LazaProject.Core.DTO_S; // تأكد من أن هذا هو المسار الصحيح لـ CategoryDTO
+using LazaProject.Core.DTO_S;
 using LazaProject.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,24 +40,12 @@ namespace LazaAPI.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> CreateCategory([FromForm] CategoryDTO categoryDTO)
+		public async Task<IActionResult> CreateCategory([FromBody] Category category)
 		{
 			if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
 			}
-
-			var category = new Category
-			{
-				Name = categoryDTO.Name
-			};
-
-			if (categoryDTO.Img != null)
-			{
-				var path = @"Images/Categories/";
-				category.Img= await _imageService.SaveImageAsync(categoryDTO.Img, path);
-			}
-
 			await _unitOfWork.Category.AddAsync(category);
 			await _unitOfWork.CompleteAsync();
 
@@ -65,7 +53,7 @@ namespace LazaAPI.Controllers
 		}
 
 		[HttpPut("{id}")]
-		public async Task<IActionResult> EditCategory(string id, [FromForm] CategoryDTO categoryDTO) // تعديل هنا لاستخدام CategoryDTO
+		public async Task<IActionResult> EditCategory(string id, [FromBody] Category category) 
 		{
 			if (!ModelState.IsValid)
 			{
@@ -76,16 +64,6 @@ namespace LazaAPI.Controllers
 			if (existingCategory == null)
 			{
 				return NotFound();
-			}
-
-			existingCategory.Name = categoryDTO.Name; 
-
-			if (categoryDTO.Img != null && categoryDTO.Img.Length > 0)
-			{
-				await _imageService.DeleteFileAsync(categoryDTO.Img.ToString());
-				categoryDTO.Img = null;
-				var path = @"Images/Categories/";
-				existingCategory.Img = await _imageService.SaveImageAsync(categoryDTO.Img, path);
 			}
 
 			await _unitOfWork.Category.UpdateAsync(existingCategory);
