@@ -28,22 +28,16 @@ namespace LazaAPI.Controllers
 		[HttpPost("AddReview/{productId}")]
 		public async Task<IActionResult> AddReview(string productId, [FromBody] ReviewDTO reviewDTO)
 		{
-			if (!User.Identity.IsAuthenticated)
-			{
-				return Unauthorized(new { message = "Please log in to continue." });
-			}
 			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-			var user = await _unitOfWork.Users.GetByIdAsync(userId);
 
 			var review = new Reviews
 			{
 				productId= productId,
 				UserId=userId,
-				UserName=user?.UserName,
+				UserName=reviewDTO.Username,
 				Feedback=reviewDTO.Feedback,
 				Rating=reviewDTO.Rating
 			};
-
 			await _unitOfWork.ReviewRepository.AddReview(review);
 			return CreatedAtAction(nameof(GetProductReviews), new { productId = productId }, review);
 

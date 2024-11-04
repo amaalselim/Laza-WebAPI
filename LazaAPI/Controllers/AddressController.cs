@@ -25,17 +25,12 @@ namespace LazaAPI.Controllers
 		[HttpPost("Add-Address")]
 		public async Task<IActionResult> AddAddress([FromBody]AddressDTO addressDTO)
 		{
-			if (!User.Identity.IsAuthenticated)
-			{
-				return Unauthorized(new { message = "Please log in to continue." });
-			}
 			var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
-			var user =await _unitOfWork.Users.GetByIdAsync(userId);
 
 			var add = new AddressUser
 			{
 				UserId = userId,
-				UserName = user.UserName,
+				UserName = addressDTO.UserName,
 				Address = addressDTO.Address,
 				City = addressDTO.City,
 				Country = addressDTO.Country,
