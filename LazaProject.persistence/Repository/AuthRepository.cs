@@ -91,7 +91,6 @@ namespace LazaProject.persistence.Repository
 			{
 				return null;
 			}
-			
 			return await _userManager.GeneratePasswordResetTokenAsync(user);
 		}
 
@@ -142,7 +141,6 @@ namespace LazaProject.persistence.Repository
 			return new { Error = "Invalid email or password." };
 		}
 
-
 		public async Task<SignInResult> PasswordSignInAsync(LoginDTO loginDto)
 		{
 			return await _manager.PasswordSignInAsync(loginDto.Email,loginDto.Password,loginDto.RememberMe,false);
@@ -176,22 +174,10 @@ namespace LazaProject.persistence.Repository
 		}
 
 
-		public async Task<IdentityResult> ResetPasswordAsync(string email, string token, string newPassword)
-		{
-			var user= await _userManager.FindByEmailAsync(email);
-			if (user == null)
-			{
-				return IdentityResult.Failed(new IdentityError { Description = "User not found." });
-			}
-			var result= await _userManager.ResetPasswordAsync(user, token, newPassword);
-			return result;
-		}
-
 		public async Task SignOutAsync()
 		{
 			await _manager.SignOutAsync();
 		}
-		
 			
 
 
