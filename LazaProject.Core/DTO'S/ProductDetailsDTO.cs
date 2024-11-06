@@ -10,6 +10,9 @@ namespace LazaProject.Core.DTO_S
 	{
 		public string Id { get; set; }
 		public string Name { get; set; }
+		public decimal Price { get; set; }
+		public string Description { get; set; }
+		public string CategoryId { get; set; }
 		public List<ProductImgDTO> Images { get; set; }
 		public List<ReviewDTO> Reviews { get; set; }
 	}

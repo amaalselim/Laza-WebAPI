@@ -81,6 +81,9 @@ namespace LazaProject.persistence.Repository
 				{
 					Id = product.Id,
 					Name = product.Name,
+					Description = product.Description,
+					Price=product.Price,
+					CategoryId= product.CategoryId,
 					Images = product.Images.Select(img => new ProductImgDTO
 					{
 						Image = img.Image,
@@ -125,6 +128,9 @@ namespace LazaProject.persistence.Repository
 			{
 				Id = product.Id,
 				Name = product.Name,
+				Description = product.Description,
+				Price = product.Price,
+				CategoryId = product.CategoryId,
 				Images = product.Images.Select(img => new ProductImgDTO
 				{
 					Image = img.Image,
@@ -168,6 +174,9 @@ namespace LazaProject.persistence.Repository
 			{
 				Id = product.Id,
 				Name = product.Name,
+				Description = product.Description,
+				Price = product.Price,
+				CategoryId = product.CategoryId,
 				Images = product.Images
 				.Select(img => new ProductImgDTO
 				{
