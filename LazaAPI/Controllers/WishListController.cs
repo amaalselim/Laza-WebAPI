@@ -46,7 +46,7 @@ namespace LazaAPI.Controllers
 			}
 		}
 
-		[HttpGet("user/{userId}")]
+		[HttpGet("WishListBy/{userId}")]
 		public async Task<IActionResult> GetUserWishList(string userId)
 		{
 			if (string.IsNullOrWhiteSpace(userId))
@@ -64,7 +64,7 @@ namespace LazaAPI.Controllers
 			return Ok(wishlistItems);
 		}
 
-		[HttpGet("users")]
+		[HttpGet("ProductWishList")]
 		public async Task<IActionResult> GetAllWishListItems()
 		{
 			var wishlistItems = await _unitOfWork.WishListItemRepository.GetAllWishListAsync();
