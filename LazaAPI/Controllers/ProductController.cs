@@ -26,14 +26,14 @@ namespace LazaAPI.Controllers
 			_imageService = imageService;
 			_mapper = mapper;
 		}
-		[HttpGet]
+		[HttpGet("GetAllProducts")]
 		public async Task<IActionResult> ViewAllProduct()
 		{
 			var product = await _unitOfWork.Product.GetAllProAsync();
 			return Ok(product);
 		}
-		[HttpGet("category/{categoryId}")]
-		public async Task<IActionResult> GetProductsByCategory(string categoryId)
+		[HttpGet("GetProductsByCategoryId")]
+		public async Task<IActionResult> GetProductsByCategory([FromQuery]string? categoryId)
 		{
 			var products = await _unitOfWork.Product.GetAllProductByCategoryIdAsync(categoryId);
 
@@ -190,7 +190,7 @@ namespace LazaAPI.Controllers
 
 			return Ok(products);
 		}
-		[HttpGet("Sorted")]
+		[HttpGet("Sort")]
 		public async Task<IActionResult> GetProductsSortedByPrice()
 		{
 			var products = await _unitOfWork.Product.GetProductsSortedByPrice();
