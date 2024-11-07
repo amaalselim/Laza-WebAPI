@@ -62,19 +62,29 @@ namespace LazaProject.persistence.Repository
 		}
 
 		public async Task<IEnumerable<ProductDetailsDTO>> GetAllProAsync()
-			{
+		{
 			var query = _context.products.AsNoTracking()
 				.Include(p => p.Images)
 				.Include(p => p.Category)
-				.Include(p => p.Reviews).AsQueryable();
-				var products = await query.ToListAsync();
+				.Include(p => p.Reviews)
+				.AsQueryable();
 
-				var productDetailsList = products.Select(product => new ProductDetailsDTO
+			var productsByCategory = await query
+				.GroupBy(p => p.CategoryId)
+				.ToListAsync();
+
+			var productDetailsList = new List<ProductDetailsDTO>();
+
+			foreach (var categoryGroup in productsByCategory)
+			{
+				var products = categoryGroup.Skip(2).Take(4).ToList();
+
+				productDetailsList.AddRange(products.Select(product => new ProductDetailsDTO
 				{
 					Id = product.Id,
 					Name = product.Name,
 					Description = product.Description,
-					Price=product.Price,
+					Price = product.Price,
 					Img = product.Img,
 					CategoryId = product.CategoryId,
 					Images = product.Images.Select(img => new ProductImgDTO
@@ -84,15 +94,17 @@ namespace LazaProject.persistence.Repository
 					Reviews = product.Reviews.Select(r => new ReviewDTO
 					{
 						UserId = r.UserId,
-						Username=r.UserName,
+						Username = r.UserName,
 						Feedback = r.Feedback,
 						Rating = r.Rating
 					}).ToList()
-				}).ToList();
-
-				return productDetailsList;
+				}));
 			}
-			public async Task<IEnumerable<ProductDetailsDTO>> GetAllProductByCategoryIdAsync(string categoryid)
+
+			return productDetailsList;
+		}
+
+		public async Task<IEnumerable<ProductDetailsDTO>> GetAllProductByCategoryIdAsync(string categoryid)
 			{
 			var query = _context.products.AsNoTracking()
 				.Include(p => p.Images)
