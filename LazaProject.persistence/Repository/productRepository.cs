@@ -68,7 +68,6 @@ namespace LazaProject.persistence.Repository
 				.Include(p => p.Category)
 				.Include(p => p.Reviews)
 				.AsQueryable();
-
 			var productsByCategory = await query
 				.GroupBy(p => p.CategoryId)
 				.ToListAsync();
@@ -77,7 +76,7 @@ namespace LazaProject.persistence.Repository
 
 			foreach (var categoryGroup in productsByCategory)
 			{
-				var products = categoryGroup.Skip(2).Take(4).ToList();
+				var products = categoryGroup.Skip(3).Take(4).ToList();
 
 				productDetailsList.AddRange(products.Select(product => new ProductDetailsDTO
 				{
@@ -106,36 +105,71 @@ namespace LazaProject.persistence.Repository
 
 		public async Task<IEnumerable<ProductDetailsDTO>> GetAllProductByCategoryIdAsync(string categoryid)
 			{
-			var query = _context.products.AsNoTracking()
+			if (categoryid == "0")
+			{
+				var query = _context.products.AsNoTracking()
+				.Include(p => p.Images)
+				.Include(p => p.Category)
+				.Include(p => p.Reviews).AsQueryable();
+				var products = await query.ToListAsync();
+
+				var productDetailsList = products.Select(product => new ProductDetailsDTO
+				{
+					Id = product.Id,
+					Name = product.Name,
+					Description = product.Description,
+					Price = product.Price,
+					Img = product.Img,
+					CategoryId = product.CategoryId,
+					Images = product.Images.Select(img => new ProductImgDTO
+					{
+						Image = img.Image
+					}).ToList(),
+					Reviews = product.Reviews.Select(r => new ReviewDTO
+					{
+						UserId = r.UserId,
+						Username = r.UserName,
+						Feedback = r.Feedback,
+						Rating = r.Rating
+					}).ToList()
+				}).ToList();
+
+				return productDetailsList;
+			}
+			else
+			{
+				var query = _context.products.AsNoTracking()
 				.Include(p => p.Images)
 				.Include(p => p.Category)
 				.Include(p => p.Reviews)
 				.Where(p => p.CategoryId == categoryid);
 
-			var products = await query.ToListAsync();
+				var products = await query.ToListAsync();
 
-			var productDetailsList = products.Select(product => new ProductDetailsDTO
-			{
-				Id = product.Id,
-				Name = product.Name,
-				Description = product.Description,
-				Price = product.Price,
-				Img = product.Img,
-				CategoryId = product.CategoryId,
-				Images = product.Images.Select(img => new ProductImgDTO
+				var productDetailsList = products.Select(product => new ProductDetailsDTO
 				{
-					Image = img.Image
-				}).ToList(),
-				Reviews = product.Reviews.Select(r => new ReviewDTO
-				{
-					UserId = r.UserId,
-					Username = r.UserName,
-					Feedback = r.Feedback,
-					Rating = r.Rating
-				}).ToList()
-			}).ToList();
+					Id = product.Id,
+					Name = product.Name,
+					Description = product.Description,
+					Price = product.Price,
+					Img = product.Img,
+					CategoryId = product.CategoryId,
+					Images = product.Images.Select(img => new ProductImgDTO
+					{
+						Image = img.Image
+					}).ToList(),
+					Reviews = product.Reviews.Select(r => new ReviewDTO
+					{
+						UserId = r.UserId,
+						Username = r.UserName,
+						Feedback = r.Feedback,
+						Rating = r.Rating
+					}).ToList()
+				}).ToList();
 
-			return productDetailsList;
+				return productDetailsList;
+			}
+			
 		}
 
 
