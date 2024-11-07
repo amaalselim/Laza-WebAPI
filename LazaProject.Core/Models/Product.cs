@@ -26,7 +26,6 @@ namespace LazaProject.Core.Models
 		[ForeignKey("Category")]
 		public string CategoryId { get; set; }
 		public Category? Category { get; set; }
-		public ProductType type { get; set; }
 		public ICollection<productImage> Images { get; set; } = new List<productImage>(); 
 		public ICollection<Reviews> Reviews { get; set; }= new List<Reviews>();	
 	}

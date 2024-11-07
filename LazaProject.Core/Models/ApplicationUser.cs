@@ -12,7 +12,6 @@ namespace LazaProject.Core.Models
     {
         public string Name { get; set; }
 		public int? VerificationCode { get; set; }
-        public Gender? Gender { get; set; }
 
 	}
 }
