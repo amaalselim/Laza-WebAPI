@@ -15,7 +15,7 @@ namespace LazaProject.Application.IRepository
 		Task<IEnumerable<Product>> GetAllImagesByProducts();
 		Task<IEnumerable<Product>> SearchProductAsync (string searchTerm);
 		Task<IEnumerable<ProductDetailsDTO>> GetAllProductByCategoryIdAsync(string? categoryid);
-		Task<IEnumerable<Product>> GetProductsSortedByPrice();
+		Task<IEnumerable<Product>> GetProductsSortedByPrice(string CategoryId);
 		Task<IEnumerable<ProductDetailsDTO>> GetAllProAsync();
 	}
 }

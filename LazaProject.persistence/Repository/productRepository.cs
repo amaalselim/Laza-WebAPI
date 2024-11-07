@@ -218,9 +218,9 @@ namespace LazaProject.persistence.Repository
 		}
 
 
-		public async Task<IEnumerable<Product>> GetProductsSortedByPrice()
+		public async Task<IEnumerable<Product>> GetProductsSortedByPrice(string CategoryId)
 		{
-			return await _context.products.OrderBy(p => p.Price).ToListAsync();
+			return await _context.products.OrderBy(p => p.Price).Where(p=>p.CategoryId==CategoryId).ToListAsync();
 		}
 
 		public async Task<IEnumerable<Product>> SearchProductAsync(string searchTerm)

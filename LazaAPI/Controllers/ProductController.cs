@@ -45,7 +45,7 @@ namespace LazaAPI.Controllers
 			return Ok(products);
 		}
 
-		[HttpGet("{id}", Name = "GetProductById")]
+		[HttpGet("GetProductBy/{id}")]
 		public async Task<IActionResult> GetProductById(string id)
 		{
 			var product = await _unitOfWork.Product.GetImagesByProductIdAsync(id);
@@ -191,9 +191,9 @@ namespace LazaAPI.Controllers
 			return Ok(products);
 		}
 		[HttpGet("Sort")]
-		public async Task<IActionResult> GetProductsSortedByPrice()
+		public async Task<IActionResult> GetProductsSortedByPrice([FromQuery]string CategoryId)
 		{
-			var products = await _unitOfWork.Product.GetProductsSortedByPrice();
+			var products = await _unitOfWork.Product.GetProductsSortedByPrice(CategoryId);
 			if (products == null || !products.Any())
 			{
 				return NotFound("No products found.");
