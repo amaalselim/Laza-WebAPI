@@ -103,9 +103,9 @@ namespace LazaProject.persistence.Repository
 			return productDetailsList;
 		}
 
-		public async Task<IEnumerable<ProductDetailsDTO>> GetAllProductByCategoryIdAsync(string categoryid)
+		public async Task<IEnumerable<ProductDetailsDTO>> GetAllProductByCategoryIdAsync(string? categoryid)
 			{
-			if (categoryid == "0")
+			if (categoryid == null)
 			{
 				var query = _context.products.AsNoTracking()
 				.Include(p => p.Images)
