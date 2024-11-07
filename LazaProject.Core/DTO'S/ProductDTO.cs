@@ -13,5 +13,4 @@ public class ProductDTO
 	public decimal Price { get; set; }
 	[ForeignKey("Category")]
 	public string CategoryId { get; set; }
-	public ProductType ProductType { get; set; }
 }

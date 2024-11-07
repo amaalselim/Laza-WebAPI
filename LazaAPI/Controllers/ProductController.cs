@@ -29,28 +29,13 @@ namespace LazaAPI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> ViewAllProduct()
 		{
-			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-			var user = await _unitOfWork.Users.GetByIdAsync(userId);
-
-			if (user == null)
-			{
-				return NotFound("User not found.");
-			}
-			var product = await _unitOfWork.Product.GetAllProAsync(user?.Gender);
+			var product = await _unitOfWork.Product.GetAllProAsync();
 			return Ok(product);
 		}
 		[HttpGet("category/{categoryId}")]
 		public async Task<IActionResult> GetProductsByCategory(string categoryId)
 		{
-			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-			var user = await _unitOfWork.Users.GetByIdAsync(userId);
-
-			if (user == null)
-			{
-				return NotFound("User not found.");
-			}
-
-			var products = await _unitOfWork.Product.GetAllProductByCategoryIdAsync(categoryId,user?.Gender);
+			var products = await _unitOfWork.Product.GetAllProductByCategoryIdAsync(categoryId);
 
 			if (!products.Any())
 			{

@@ -61,20 +61,12 @@ namespace LazaProject.persistence.Repository
 			return pro;
 		}
 
-		public async Task<IEnumerable<ProductDetailsDTO>> GetAllProAsync(Gender? gender)
+		public async Task<IEnumerable<ProductDetailsDTO>> GetAllProAsync()
 			{
 			var query = _context.products.AsNoTracking()
 				.Include(p => p.Images)
 				.Include(p => p.Category)
 				.Include(p => p.Reviews).AsQueryable();
-			if (gender == Gender.Men)
-				{
-					query = query.Where(p => p.type == ProductType.Men);
-				}
-				else if (gender == Gender.Women)
-				{
-					query = query.Where(p => p.type == ProductType.Women);
-				}
 				var products = await query.ToListAsync();
 
 				var productDetailsList = products.Select(product => new ProductDetailsDTO
@@ -83,12 +75,11 @@ namespace LazaProject.persistence.Repository
 					Name = product.Name,
 					Description = product.Description,
 					Price=product.Price,
-					CategoryId= product.CategoryId,
+					Img = product.Img,
+					CategoryId = product.CategoryId,
 					Images = product.Images.Select(img => new ProductImgDTO
 					{
-						Image = img.Image,
-						ProductId = img.ProductId,
-						ProductName = product.Name
+						Image = img.Image
 					}).ToList(),
 					Reviews = product.Reviews.Select(r => new ReviewDTO
 					{
@@ -101,26 +92,13 @@ namespace LazaProject.persistence.Repository
 
 				return productDetailsList;
 			}
-			public async Task<IEnumerable<ProductDetailsDTO>> GetAllProductByCategoryIdAsync(string categoryid, Gender? gender)
+			public async Task<IEnumerable<ProductDetailsDTO>> GetAllProductByCategoryIdAsync(string categoryid)
 			{
 			var query = _context.products.AsNoTracking()
 				.Include(p => p.Images)
 				.Include(p => p.Category)
 				.Include(p => p.Reviews)
 				.Where(p => p.CategoryId == categoryid);
-
-			if (gender == Gender.Men)
-			{
-				query = query.Where(p => p.type == ProductType.Men);
-			}
-			else if (gender == Gender.Women)
-			{
-				query = query.Where(p => p.type == ProductType.Women);
-			}
-			else
-			{
-				query = query;
-			}
 
 			var products = await query.ToListAsync();
 
@@ -130,12 +108,11 @@ namespace LazaProject.persistence.Repository
 				Name = product.Name,
 				Description = product.Description,
 				Price = product.Price,
+				Img = product.Img,
 				CategoryId = product.CategoryId,
 				Images = product.Images.Select(img => new ProductImgDTO
 				{
-					Image = img.Image,
-					ProductId = img.ProductId,
-					ProductName = product.Name
+					Image = img.Image
 				}).ToList(),
 				Reviews = product.Reviews.Select(r => new ReviewDTO
 				{
@@ -177,12 +154,11 @@ namespace LazaProject.persistence.Repository
 				Description = product.Description,
 				Price = product.Price,
 				CategoryId = product.CategoryId,
+				Img=product.Img,
 				Images = product.Images
 				.Select(img => new ProductImgDTO
 				{
-					Image = img.Image,
-					ProductId = product.Id,
-					ProductName = product.Name
+					Image = img.Image
 				}).ToList(),
 				Reviews = product.Reviews.Select(r => new ReviewDTO
 				{
