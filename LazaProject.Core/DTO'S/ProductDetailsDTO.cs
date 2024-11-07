@@ -13,6 +13,7 @@ namespace LazaProject.Core.DTO_S
 		public decimal Price { get; set; }
 		public string Description { get; set; }
 		public string CategoryId { get; set; }
+		public string Img { get; set; }
 		public List<ProductImgDTO> Images { get; set; }
 		public List<ReviewDTO> Reviews { get; set; }
 	}
