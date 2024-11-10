@@ -11,9 +11,8 @@ namespace LazaProject.Application.IRepository
 	public interface IWishListItemRepository
 	{
 		Task<bool> AddToWishListAsync(string UserId, string ProductId);
-		Task<bool> RemoveFromWishListAsync(string WishListItemId);
+		Task<bool> RemoveFromWishListAsync(string ProductId);
 		Task<IEnumerable<WishListItemDTO>> GetWishListItemByUserIdAsync(string UserId);	
-		Task<IEnumerable<WishListItemDTO>> GetAllWishListAsync();
 
 	}
 }

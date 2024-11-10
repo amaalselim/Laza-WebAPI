@@ -19,9 +19,9 @@ public class MappingProfile : Profile
 			.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
 			.ForMember(dest => dest.Images, opt => opt.MapFrom(src => MapImages(src.Images)));
 
-		CreateMap<WishListItem, WishListItemDTO>()
-			.ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
-			.ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product.Price));
+		CreateMap<WishListItem, WishListItemDTO>();
+
+
 
 		CreateMap<WishListItemDTO, WishListItem>();
 		CreateMap<ReviewDTO, Reviews>();

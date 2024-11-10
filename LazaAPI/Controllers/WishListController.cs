@@ -34,7 +34,7 @@ namespace LazaAPI.Controllers
 				return Unauthorized(new { message = "Please log in to continue." });
 			}
 			wishListItemDTO.UserId = userId;
-			var result = await _unitOfWork.WishListItemRepository.AddToWishListAsync(wishListItemDTO.UserId, wishListItemDTO.ProductId);
+			var result = await _unitOfWork.WishListItemRepository.AddToWishListAsync(wishListItemDTO.UserId, wishListItemDTO.Id);
 
 			if (result)
 			{
@@ -46,9 +46,10 @@ namespace LazaAPI.Controllers
 			}
 		}
 
-		[HttpGet("WishListBy/{userId}")]
-		public async Task<IActionResult> GetUserWishList(string userId)
+		[HttpGet("GetUserWishList")]
+		public async Task<IActionResult> GetUserWishList()
 		{
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 			if (string.IsNullOrWhiteSpace(userId))
 			{
 				return BadRequest("UserId cannot be empty.");
@@ -64,24 +65,11 @@ namespace LazaAPI.Controllers
 			return Ok(wishlistItems);
 		}
 
-		[HttpGet("ProductWishList")]
-		public async Task<IActionResult> GetAllWishListItems()
+
+		[HttpDelete("RemoveFromWishList")]
+		public async Task<IActionResult> RemoveFromWishList([FromBody] WishListItemDTO wishListItemDTO)
 		{
-			var wishlistItems = await _unitOfWork.WishListItemRepository.GetAllWishListAsync();
-
-			if (wishlistItems == null)
-			{
-				return NotFound("No wishlist items found");
-			}
-
-			return Ok(wishlistItems);
-		}
-
-
-		[HttpDelete("Remove/{id}")]
-		public async Task<IActionResult> RemoveFromWishList(string id)
-		{
-			var result = await _unitOfWork.WishListItemRepository.RemoveFromWishListAsync(id);
+			var result = await _unitOfWork.WishListItemRepository.RemoveFromWishListAsync(wishListItemDTO.Id);
 			if (!result)
 			{
 				return NotFound("Wishlist item not found.");

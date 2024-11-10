@@ -28,23 +28,10 @@ namespace LazaProject.persistence.Repository
 			var wishlistitem = new WishListItem
 			{
 				ProductId = ProductId,
-				UserId = UserId
+				UserId = UserId,
 			};
 			await _context.wishListItems.AddAsync(wishlistitem);
 			return await _context.SaveChangesAsync() > 0;
-		}
-
-		public async Task<IEnumerable<WishListItemDTO>> GetAllWishListAsync()
-		{
-			var wishlist= await _context.wishListItems.Select(w => new WishListItemDTO
-			{
-				UserId = w.UserId,
-				ProductId = w.ProductId,
-				ProductName = w.Product.Name,
-				ProductPrice = w.Product.Price
-			})
-			.ToListAsync();
-			return wishlist;
 		}
 
 		public async Task<IEnumerable<WishListItemDTO>> GetWishListItemByUserIdAsync(string UserId)
@@ -54,9 +41,10 @@ namespace LazaProject.persistence.Repository
 			.Select(w => new WishListItemDTO
 			{
 				UserId=w.UserId,
-				ProductId= w.ProductId,
-				ProductName=w.Product.Name,
-				ProductPrice=w.Product.Price
+				Id= w.ProductId,
+				Name=w.Product.Name,
+				Price=w.Product.Price,
+				Img=w.Product.Img
 			})
 			.ToListAsync();
 			return wishlistItems;
@@ -66,9 +54,9 @@ namespace LazaProject.persistence.Repository
 
 
 
-		public async Task<bool> RemoveFromWishListAsync(string WishListItemId)
+		public async Task<bool> RemoveFromWishListAsync(string ProductId)
 		{
-			var item = await _context.wishListItems.FindAsync(WishListItemId);
+			var item = await _context.wishListItems.Where(w=>w.ProductId == ProductId).FirstOrDefaultAsync();	
 			if (item == null)
 			{
 				return false;

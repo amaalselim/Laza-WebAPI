@@ -27,11 +27,9 @@ namespace LazaProject.persistence.Repository
 		}
         public async Task AddAsync(Product product)
 		{
-
 			await _context.products.AddAsync(product);
 			await _context.SaveChangesAsync();
 		}
-
 		public async Task DeleteAsync(string id)
 		{
 			var prod = await _context.products.FindAsync(id);

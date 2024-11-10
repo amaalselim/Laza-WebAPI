@@ -84,16 +84,16 @@ namespace LazaProject.persistence.Services
 				return null;
 			}
 
-			string fileName = Guid.NewGuid().ToString();
+			//string fileName = Guid.NewGuid().ToString();
 			string extension = Path.GetExtension(Img.FileName);
-			string filePath = Path.Combine(_webHostEnvironment.WebRootPath, folderPath, fileName + extension);
+			string filePath = Path.Combine(_webHostEnvironment.WebRootPath, folderPath, Img.FileName);
 
 			using (var fileStream = new FileStream(filePath, FileMode.Create))
 			{
 				await Img.CopyToAsync(fileStream);
 			}
 
-			return Path.Combine(folderPath, fileName + extension);
+			return Path.Combine(folderPath, Img.FileName);
 		}
 
 	}
