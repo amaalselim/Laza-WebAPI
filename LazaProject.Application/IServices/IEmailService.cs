@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LazaProject.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,5 +10,7 @@ namespace LazaProject.Application.IServices
     public interface IEmailService
     {
         Task SendEmailAsync(string email,string userName, string Subject, string message);
-    }
+        Task SendOrderConfirmationEmailAsync(string email, string userName, Cart cart, AddressUser billingAddress, Card paymentCard);
+
+	}
 }
