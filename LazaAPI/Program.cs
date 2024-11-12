@@ -17,6 +17,7 @@ using System.Text;
 using LazaProject.persistence.Services;
 using LazaProject.Application.IServices;
 using LazaProject.persistence.UnitOfWork;
+
 using LazaProject.Core.Enums;
 using Autofac.Core;
 using Microsoft.AspNetCore.Http.Features;
@@ -35,8 +36,8 @@ namespace LazaAPI
 			options.UseSqlServer(builder.Configuration.GetConnectionString("cs")));
 
 			builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-					.AddEntityFrameworkStores<ApplicationDbContext>()
-					.AddDefaultTokenProviders();
+						   .AddEntityFrameworkStores<ApplicationDbContext>()
+						   .AddDefaultTokenProviders();
 
 			// Register Email Service using Google API credentials
 			var smtpSettings = builder.Configuration.GetSection("SMTP");
@@ -58,9 +59,10 @@ namespace LazaAPI
 			builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 			builder.Services.AddScoped<ICartRepository, CartRepository>();
 			builder.Services.AddScoped<IAddressRepository,AddressRepository>();
-			builder.Services.AddScoped<ICardRepository, CardRepository>();	
-
+			builder.Services.AddScoped<ICardRepository, CardRepository>();
+			builder.Services.AddScoped<IOrderService, OrderService>();
 			builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+			
 			builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 

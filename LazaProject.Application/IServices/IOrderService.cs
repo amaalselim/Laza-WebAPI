@@ -9,7 +9,7 @@ namespace LazaProject.Application.IServices
 {
 	public interface IOrderService
 	{
-		Task<Cart> GetCartByIdAsync(string cartId, string userId);
+		Task<Cart> GetCartByIdAsync(string userId);
 		Task<AddressUser> GetBillingAddressAsync(string userId);
 		Task<Card> GetPaymentCardAsync(string userId);
 	}

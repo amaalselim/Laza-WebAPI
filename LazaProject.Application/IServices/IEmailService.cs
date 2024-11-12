@@ -10,7 +10,7 @@ namespace LazaProject.Application.IServices
     public interface IEmailService
     {
         Task SendEmailAsync(string email,string userName, string Subject, string message);
-        Task SendOrderConfirmationEmailAsync(string email, string userName, Cart cart, AddressUser billingAddress, Card paymentCard);
+		Task<bool> SendOrderConfirmationEmailAsync(string email, string userName, Cart cart, AddressUser billingAddress, Card paymentCard);
 
 	}
 }

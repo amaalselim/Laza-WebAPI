@@ -24,11 +24,12 @@ namespace LazaProject.persistence.Services
 								 .FirstOrDefaultAsync(a => a.UserId == userId);
 		}
 
-		public async Task<Cart> GetCartByIdAsync(string cartId, string userId)
+		public async Task<Cart> GetCartByIdAsync(string userId)
 		{
 			return await _context.carts
-								 .Include(c => c.Items)
-								 .FirstOrDefaultAsync(c => c.Id == cartId && c.UserId == userId);
+			.Include(c => c.Items.Where(i => i.IsActive))
+			.ThenInclude(i => i.Product)
+			.FirstOrDefaultAsync(c => c.UserId == userId);
 		}
 
 		public async Task<Card> GetPaymentCardAsync(string userId)
