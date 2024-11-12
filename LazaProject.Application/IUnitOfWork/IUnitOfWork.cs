@@ -23,6 +23,7 @@ namespace LazaProject.Application.IUnitOfWork
 		IWishListItemRepository WishListItemRepository { get; }
 		IReviewRepository ReviewRepository { get; }
 		IAddressRepository AddressRepository { get; }
+		ICardRepository CardRepository { get; }
 		Task<int> CompleteAsync();
 	}
 }

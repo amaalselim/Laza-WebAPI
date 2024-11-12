@@ -28,6 +28,7 @@ namespace LazaProject.persistence.Data
 		public DbSet<Cart> carts{ get; set; }
 		public DbSet<CartItem> cartItems{ get; set; }
 		public DbSet<AddressUser> address{ get; set; }
+		public DbSet<Card> cards{ get; set; }
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			optionsBuilder.UseSqlServer("Server=db9584.public.databaseasp.net; Database=db9584; User Id=db9584; Password=8e+XzQ7=4-Tx; Encrypt=False; MultipleActiveResultSets=True;");

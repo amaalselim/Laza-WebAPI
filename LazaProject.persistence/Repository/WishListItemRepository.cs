@@ -24,7 +24,6 @@ namespace LazaProject.persistence.Repository
 		}
 		public async Task<bool> AddToWishListAsync(string userId, string productId)
 		{
-			// التحقق إذا كان المنتج موجود بالفعل في قائمة الأمنيات الخاصة بالمستخدم
 			var existingItem = await _context.wishListItems
 				.FirstOrDefaultAsync(w => w.UserId == userId && w.ProductId == productId);
 
