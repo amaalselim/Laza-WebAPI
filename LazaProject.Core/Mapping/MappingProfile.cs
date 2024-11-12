@@ -40,6 +40,9 @@ public class MappingProfile : Profile
 
 		CreateMap<AddressUser, AddressDTO>();
 		CreateMap<AddressDTO, AddressUser>();
+
+		CreateMap<Card,CardDTO>();
+		CreateMap<CardDTO, Card>();
 	}
 
 	private List<productImage> MapImages(IEnumerable<IFormFile> images) 
