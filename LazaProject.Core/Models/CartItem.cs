@@ -10,7 +10,7 @@ namespace LazaProject.Core.Models
 	public class CartItem
 	{
 		public string Id { get; set; } = Guid.NewGuid().ToString();
-		public int Quantity	{ get; set; }
+		public int Quantity { get; set; }
 
 		[ForeignKey("Cart")]
 		public string CartId { get; set; }

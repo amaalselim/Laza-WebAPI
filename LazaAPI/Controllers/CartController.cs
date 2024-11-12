@@ -32,6 +32,10 @@ namespace LazaAPI.Controllers
         [HttpPost("AddToCart")]
         public async Task<IActionResult> AddToCart([FromBody] CartItemDTO cartItemDTO)
         {
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             await _unitOfWork.cartRepository.AddToCartAsync(userId,cartItemDTO);
 			return CreatedAtAction(nameof(GetCart), new { userId = userId }, cartItemDTO);

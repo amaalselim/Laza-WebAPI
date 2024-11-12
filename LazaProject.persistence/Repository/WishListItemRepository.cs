@@ -22,17 +22,26 @@ namespace LazaProject.persistence.Repository
 			_context = context;
 			_mapper = mapper;
 		}
-        public async Task<bool> AddToWishListAsync(string UserId, string ProductId)
+		public async Task<bool> AddToWishListAsync(string userId, string productId)
 		{
+			// التحقق إذا كان المنتج موجود بالفعل في قائمة الأمنيات الخاصة بالمستخدم
+			var existingItem = await _context.wishListItems
+				.FirstOrDefaultAsync(w => w.UserId == userId && w.ProductId == productId);
 
-			var wishlistitem = new WishListItem
+			if (existingItem != null)
 			{
-				ProductId = ProductId,
-				UserId = UserId,
+				return false;
+			}
+			var wishlistItem = new WishListItem
+			{
+				ProductId = productId,
+				UserId = userId,
 			};
-			await _context.wishListItems.AddAsync(wishlistitem);
+
+			await _context.wishListItems.AddAsync(wishlistItem);
 			return await _context.SaveChangesAsync() > 0;
 		}
+
 
 		public async Task<IEnumerable<WishListItemDTO>> GetWishListItemByUserIdAsync(string UserId)
 		{

@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LazaProject.persistence.Repository
@@ -17,13 +16,19 @@ namespace LazaProject.persistence.Repository
 		private readonly ApplicationDbContext _context;
 		private readonly IMapper _mapper;
 
-		public CartRepository(ApplicationDbContext context,IMapper mapper)
-        {
+		public CartRepository(ApplicationDbContext context, IMapper mapper)
+		{
 			_context = context;
 			_mapper = mapper;
 		}
+
 		public async Task AddToCartAsync(string UserId, CartItemDTO cartItemDTO)
 		{
+			if (cartItemDTO.Quantity == 0)
+			{
+				cartItemDTO.Quantity = 1;
+			}
+
 			var cartDTo = await GetCartAsync(UserId);
 			Cart cart;
 
@@ -31,7 +36,7 @@ namespace LazaProject.persistence.Repository
 			{
 				cart = new Cart { UserId = UserId };
 				await _context.carts.AddAsync(cart);
-				await _context.SaveChangesAsync(); 
+				await _context.SaveChangesAsync();
 			}
 			else
 			{
@@ -42,15 +47,24 @@ namespace LazaProject.persistence.Repository
 			if (existingItem != null)
 			{
 				existingItem.Quantity = cartItemDTO.Quantity;
-				existingItem.Price = existingItem.Product.Price; 
+				existingItem.Price = existingItem.Product.Price;
 			}
 			else
 			{
 				var cartItem = _mapper.Map<CartItem>(cartItemDTO);
-				cartItem.CartId = cart.Id; 
-				cart.Items.Add(cartItem); 
+				cartItem.CartId = cart.Id;
+
+				var product = await _context.products.FindAsync(cartItemDTO.ProductId);
+				if (product != null)
+				{
+					cartItem.Product = product;
+					cartItem.Price = product.Price;
+				}
+
+				cart.Items.Add(cartItem);
 			}
-			cart.TotalPrice = cart.Items.Sum(item => item.Quantity * item.Product.Price);
+
+			cart.TotalPrice = cart.Items.Sum(item => item.Quantity * item.Price);
 
 			_context.carts.Update(cart);
 			await _context.SaveChangesAsync();
@@ -73,23 +87,20 @@ namespace LazaProject.persistence.Repository
 			}
 		}
 
-
 		public async Task<CartDTO> GetCartAsync(string UserId)
 		{
 			var cart = await _context.carts
-				.Include(c => c.Items.Where(i => i.IsActive)) 
-				.ThenInclude(p => p.Product)
+				.Include(c => c.Items.Where(i => i.IsActive))
+				.ThenInclude(i => i.Product)
 				.FirstOrDefaultAsync(c => c.UserId == UserId);
 
 			if (cart == null || !cart.Items.Any(i => i.IsActive))
 			{
-				return null; 
+				return null;
 			}
 
 			return _mapper.Map<CartDTO>(cart);
 		}
-
-
 
 		public async Task RemoveFromCartAsync(string UserId, string ProductId)
 		{
@@ -102,12 +113,11 @@ namespace LazaProject.persistence.Repository
 			var cartItem = cart.Items.FirstOrDefault(i => i.ProductId == ProductId && i.IsActive);
 			if (cartItem != null)
 			{
-				cartItem.IsActive = false; 
+				cartItem.IsActive = false;
 				await _context.SaveChangesAsync();
 			}
 		}
-
-
+	}
 		//public async Task UpdateCartItemAsync(string UserId, CartItemDTO cartItemDTO)
 		//{
 		//	var cart = await GetCartAsync(UserId);
@@ -120,5 +130,4 @@ namespace LazaProject.persistence.Repository
 		//		await _context.SaveChangesAsync();
 		//	}
 		//}
-	}
 }
