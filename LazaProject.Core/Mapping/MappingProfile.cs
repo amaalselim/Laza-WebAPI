@@ -17,6 +17,7 @@ public class MappingProfile : Profile
 			.ForMember(dest => dest.Id, opt => opt.Ignore())
 			.ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
 			.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+			.ForMember(dest => dest.Img, opt => opt.MapFrom(src => src.Img))
 			.ForMember(dest => dest.Images, opt => opt.MapFrom(src => MapImages(src.Images)));
 
 		CreateMap<WishListItem, WishListItemDTO>();
@@ -28,8 +29,7 @@ public class MappingProfile : Profile
 		CreateMap<Reviews, ReviewDTO>();
 
 
-		CreateMap<Cart,CartDTO>();
-		CreateMap<CartDTO, Cart>();
+		CreateMap<Cart, CartDTO>();
 
 		CreateMap<CartItem, CartItemDTO>()
 			.ForMember(d => d.ProductName, o => o.MapFrom(src => src.Product.Name))

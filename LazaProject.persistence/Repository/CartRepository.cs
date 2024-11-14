@@ -98,7 +98,6 @@ namespace LazaProject.persistence.Repository
 			{
 				return null;
 			}
-
 			return _mapper.Map<CartDTO>(cart);
 		}
 

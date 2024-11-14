@@ -45,14 +45,14 @@ namespace LazaAPI.Controllers
 		{
 			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 			await _unitOfWork.cartRepository.RemoveFromCartAsync(userId, productId);
-			return NoContent();
+			return Ok("Item Removed From Cart Successfully");
 		}
 		[HttpDelete("Clear-Cart")]
 		public async Task<IActionResult> ClearCart()
 		{
 			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 			await _unitOfWork.cartRepository.ClearCartAsync(userId);
-			return NoContent();
+			return Ok("Cart Cleared Successfully");
 		}
 
 	}
