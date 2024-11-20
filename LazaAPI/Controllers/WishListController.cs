@@ -57,14 +57,8 @@ namespace LazaAPI.Controllers
 
 			var wishlistItems = await _unitOfWork.WishListItemRepository.GetWishListItemByUserIdAsync(userId);
 
-			if (wishlistItems == null || !wishlistItems.Any())
-			{
-				return NotFound("No wishlist items found for this user.");
-			}
-
 			return Ok(wishlistItems);
 		}
-
 
 		[HttpDelete("RemoveFromWishList")]
 		public async Task<IActionResult> RemoveFromWishList([FromBody] WishListItemDTO wishListItemDTO)

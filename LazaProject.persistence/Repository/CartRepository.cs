@@ -87,7 +87,7 @@ namespace LazaProject.persistence.Repository
 			}
 		}
 
-		public async Task<CartDTO> GetCartAsync(string UserId)
+		public async Task<IEnumerable<CartItemDTO>> GetCartAsync(string UserId)
 		{
 			var cart = await _context.carts
 				.Include(c => c.Items.Where(i => i.IsActive))
@@ -96,10 +96,11 @@ namespace LazaProject.persistence.Repository
 
 			if (cart == null || !cart.Items.Any(i => i.IsActive))
 			{
-				return null;
+				return Enumerable.Empty<CartItemDTO>();
 			}
-			return _mapper.Map<CartDTO>(cart);
+			return _mapper.Map<IEnumerable<CartItemDTO>>(cart.Items);
 		}
+
 
 		public async Task RemoveFromCartAsync(string UserId, string ProductId)
 		{

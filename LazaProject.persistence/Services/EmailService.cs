@@ -290,7 +290,6 @@ public class EmailService : IEmailService
             <div class='billing-shipping'>
                 <div class='address-section'>
                     <h4>Payment Method</h4>
-                    <p class='address-line'><strong>Type:</strong> {paymentCard.CardType}</p>
                     <p class='address-line'><strong>Card Number:</strong> **** **** **** {paymentCard.CardNumber.Substring(paymentCard.CardNumber.Length - 4)}</p>
                     <p class='address-line'><strong>Expiry Date:</strong> {paymentCard.ExpirationDate}</p>
                 </div>

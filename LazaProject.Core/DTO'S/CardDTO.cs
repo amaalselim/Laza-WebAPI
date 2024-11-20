@@ -25,8 +25,6 @@ namespace LazaProject.Core.DTO_S
 		[Required]
 		[RegularExpression(@"^\d{3,4}$", ErrorMessage = "CVV must be 3 or 4 digits")]
 		public string CVV { get; set; }
-		[Required]
-		public string CardType { get; set; }
 		[JsonIgnore]
 		public string? UserId { get; set; }
 	}

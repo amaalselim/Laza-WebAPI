@@ -26,8 +26,6 @@ namespace LazaProject.Core.Models
 		[RegularExpression(@"^\d{3,4}$", ErrorMessage = "CVV must be 3 or 4 digits")]
 		public string CVV { get; set; }
 
-		[Required]
-		public string CardType { get; set; }
 		public string UserId { get; set; }
 	}
 }

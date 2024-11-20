@@ -48,10 +48,6 @@ namespace LazaAPI.Controllers
 				return Unauthorized(new { message = "Please log in to continue." });
 			}
 			cardDTO.UserId = userId;
-			if (string.IsNullOrWhiteSpace(cardDTO.CardType))
-			{
-				return BadRequest(new { message = "Card type is required." });
-			}
 
 			var card = _mapper.Map<Card>(cardDTO);
 			await _unitOfWork.CardRepository.AddCardAsync(card);

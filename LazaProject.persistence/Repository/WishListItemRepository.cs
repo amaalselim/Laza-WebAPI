@@ -55,7 +55,8 @@ namespace LazaProject.persistence.Repository
 				Img=w.Product.Img
 			})
 			.ToListAsync();
-			return wishlistItems;
+
+			return wishlistItems ?? new List<WishListItemDTO>();
 		}
 
 
