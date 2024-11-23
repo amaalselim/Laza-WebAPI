@@ -10,7 +10,8 @@ namespace LazaProject.Application.IRepository
 {
 	public interface ICartRepository
 	{
-		Task<IEnumerable<CartItemDTO>> GetCartAsync (string UserId);
+		//Task<IEnumerable<CartItemDTO>> GetCartAsync (string UserId);
+		Task<CartDTO> GetCartAsync (string UserId);
 		Task AddToCartAsync(string  UserId, CartItemDTO cartItemDTO);
 		//Task UpdateCartItemAsync(string  UserId, CartItemDTO cartItemDTO);
 		Task RemoveFromCartAsync (string UserId,string ProductId);

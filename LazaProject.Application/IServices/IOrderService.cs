@@ -1,4 +1,5 @@
-﻿using LazaProject.Core.Models;
+﻿using LazaProject.Core.DTO_S;
+using LazaProject.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace LazaProject.Application.IServices
 {
 	public interface IOrderService
 	{
-		Task<Cart> GetCartByIdAsync(string userId);
+		Task<CartDTO> GetCartByIdAsync(string userId);
 		Task<AddressUser> GetBillingAddressAsync(string userId);
 		Task<Card> GetPaymentCardAsync(string userId);
 	}

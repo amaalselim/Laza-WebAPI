@@ -9,23 +9,32 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using LazaProject.Application.IUnitOfWork;
+using AutoMapper;
 
 namespace LazaAPI.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class OrderConfirmationmailController : ControllerBase
+	public class OrderController : ControllerBase
 	{
 		private readonly IEmailService _emailService;
 		private readonly IOrderService _orderService;
 		private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
+        private readonly IMapper _mapper;
 
-		public OrderConfirmationmailController(IEmailService emailService, IOrderService orderService, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager)
+        public OrderController(
+			IEmailService emailService,
+			IOrderService orderService,
+			Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager,
+			IMapper mapper
+			)
 		{
 			_emailService = emailService;
 			_orderService = orderService;
 			_userManager = userManager;
-			_userManager = userManager;
+            _mapper = mapper;
+            _userManager = userManager;
 		}
 		[HttpPost("send-order-confirmation")]
 		[Authorize]
@@ -39,10 +48,10 @@ namespace LazaAPI.Controllers
 				var username = user.Name;
 
 				var cart = await _orderService.GetCartByIdAsync(userId);
+				var Cartdto=_mapper.Map<CartDTO>(cart);
 				var billingAddress = await _orderService.GetBillingAddressAsync(userId);
 				var paymentCard = await _orderService.GetPaymentCardAsync(userId);
 
-				// Send the email and check if it was successful
 				bool emailSent = await _emailService.SendOrderConfirmationEmailAsync(
 					email,
 					username,
@@ -57,16 +66,25 @@ namespace LazaAPI.Controllers
 				}
 				else
 				{
-					// If email sending failed
 					return StatusCode(500, new { message = "Failed to send email." });
 				}
 			}
 			catch (Exception ex)
 			{
-				// Handle unexpected exceptions
 				return StatusCode(500, new { message = $"Failed to send email: {ex.Message}" });
 			}
 		}
+		[HttpGet("GetOrder")]
+		public async Task<IActionResult> GetOrder()
+		{
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var order = await _orderService.GetCartByIdAsync(userId);
+            if (order == null)
+            {
+                return Ok(new { Message = "No Orders Available" });
+            }
+            return Ok(order);
+        }
 
 	}
 }

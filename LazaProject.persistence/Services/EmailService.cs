@@ -2,6 +2,7 @@
 using System.Net.Mail;
 using System.Threading.Tasks;
 using LazaProject.Application.IServices;
+using LazaProject.Core.DTO_S;
 using LazaProject.Core.Models;
 
 public class EmailService : IEmailService
@@ -122,7 +123,7 @@ public class EmailService : IEmailService
             Console.WriteLine($"Failed to send email: {ex.Message}");
         }
     }
-	public async Task<bool> SendOrderConfirmationEmailAsync(string email, string userName, Cart cart, AddressUser billingAddress, Card paymentCard)
+	public async Task<bool> SendOrderConfirmationEmailAsync(string email, string userName, CartDTO cart, AddressUser billingAddress, Card paymentCard)
 	{
 		try
 		{
@@ -254,12 +255,12 @@ public class EmailService : IEmailService
                 <h3>Order Summary</h3>
                 <div class='product-list'>
                     {string.Join("", cart.Items.Select(item => {
-					string imageUrl = baseUrl + item.Product.Img; // الحصول على المسار الكامل للصورة
+					string imageUrl = baseUrl + item.ProductImg; // الحصول على المسار الكامل للصورة
 					return $@"
                         <div class='product-item'>
                             <img src='{imageUrl}' alt='Product Image' class='product-image' />
                             <div class='product-details'>
-                                <div class='product-title'>{item.Product.Name ?? "Product Name"}</div>
+                                <div class='product-title'>{item.ProductName ?? "Product Name"}</div>
                                 <div class='quantity'>Quantity: {item.Quantity}</div>
                                 <div class='price-details'>{item.Price:0.00} EGP</div>
                             </div>

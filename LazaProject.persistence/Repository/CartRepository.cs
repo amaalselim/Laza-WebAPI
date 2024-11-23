@@ -86,8 +86,7 @@ namespace LazaProject.persistence.Repository
 				await _context.SaveChangesAsync();
 			}
 		}
-
-		public async Task<IEnumerable<CartItemDTO>> GetCartAsync(string UserId)
+		public async Task<CartDTO> GetCartAsync(string UserId)
 		{
 			var cart = await _context.carts
 				.Include(c => c.Items.Where(i => i.IsActive))
@@ -96,10 +95,13 @@ namespace LazaProject.persistence.Repository
 
 			if (cart == null || !cart.Items.Any(i => i.IsActive))
 			{
-				return Enumerable.Empty<CartItemDTO>();
+				return null;
 			}
-			return _mapper.Map<IEnumerable<CartItemDTO>>(cart.Items);
+			return _mapper.Map<CartDTO>(cart);
 		}
+
+
+		
 
 
 		public async Task RemoveFromCartAsync(string UserId, string ProductId)
@@ -108,26 +110,9 @@ namespace LazaProject.persistence.Repository
 				.Include(c => c.Items)
 				.FirstOrDefaultAsync(c => c.UserId == UserId);
 
-			if (cart == null) return;
-
-			var cartItem = cart.Items.FirstOrDefault(i => i.ProductId == ProductId && i.IsActive);
-			if (cartItem != null)
-			{
-				cartItem.IsActive = false;
-				await _context.SaveChangesAsync();
-			}
+			_context.carts.Remove(cart);	
+			await _context.SaveChangesAsync();
 		}
 	}
-		//public async Task UpdateCartItemAsync(string UserId, CartItemDTO cartItemDTO)
-		//{
-		//	var cart = await GetCartAsync(UserId);
-		//	if (cart == null) return;
-
-		//	var cartItem = cart.Items.FirstOrDefault(i => i.ProductId == cartItemDTO.ProductId);
-		//	if (cartItem != null)
-		//	{
-		//		cartItem.Quantity = cartItemDTO.Quantity;
-		//		await _context.SaveChangesAsync();
-		//	}
-		//}
+		
 }
