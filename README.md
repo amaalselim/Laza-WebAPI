@@ -13,6 +13,7 @@ Laza WebAPI is a robust backend API built with ASP.NET Core for a mobile e-comme
 - **Product Management**:
   - View categories and products.
   - Search and filter products.
+  - Product reviews for user feedback.
 
 - **Shopping Cart**:
   - Add, update, and remove items from the cart.
@@ -31,12 +32,20 @@ Laza WebAPI is a robust backend API built with ASP.NET Core for a mobile e-comme
   - Retrieve, update, and delete stored cards.
 
 - **Email Services**:
-  - Send user Reset Password Verfication Code mail.
+  - Send user Reset Password Verification Code mail.
   - Send order confirmation emails upon order placement.
 
 - **Admin Features**:
   - Manage categories, products, and orders.
   - Assign roles to users.
+
+- **Wishlist**:
+  - Add and remove products from the wishlist.
+  - Retrieve the wishlist for the logged-in user.
+
+- **Product Reviews**:
+  - Submit reviews for products.
+  - View average ratings and feedback from other users.
 
 ## 🚀 Getting Started
 
