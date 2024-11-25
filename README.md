@@ -1,6 +1,6 @@
 # Laza WebAPI
 
-Laza WebAPI is a robust backend API built with ASP.NET Core for a mobile e-commerce application. It provides all the necessary endpoints to manage categories, products, carts, orders, user authentication/authorization, and more. The application follows **Clean Architecture** principles for better maintainability and scalability.
+Laza WebAPI is a backend API built with ASP.NET Core for a mobile e-commerce application. It provides all the necessary endpoints to manage categories, products, carts, orders, user authentication/authorization, and more. The application follows **Clean Architecture** principles for better maintainability and scalability.
 
 ## 🌟 Features
 
