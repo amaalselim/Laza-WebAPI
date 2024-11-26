@@ -22,14 +22,11 @@ namespace LazaAPI.Controllers
         [HttpGet("GetCart")]
         public async Task<ActionResult<CartDTO>> GetCart()
         {
-            var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var cart=await _unitOfWork.cartRepository.GetCartAsync(userId);
-            if (cart == null)
-            {
-				return Ok(new { Message = "No items available in the cart." });
-			}
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cart = await _unitOfWork.cartRepository.GetCartAsync(userId);
             return Ok(cart);
         }
+
 
         [HttpPost("AddToCart")]
         public async Task<IActionResult> AddToCart([FromBody] CartItemDTO cartItemDTO)
