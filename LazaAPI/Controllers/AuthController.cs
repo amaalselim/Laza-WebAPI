@@ -26,7 +26,8 @@ namespace LazaAPI.Controllers
 			_authService = authService;
 		}
 		[HttpGet("All-Users")]
-		public async Task<IActionResult> getAllUsers()
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> getAllUsers()
 		{
 			var user = await _unitOfWork.Users.GetAllAsync();
 			return Ok(user);

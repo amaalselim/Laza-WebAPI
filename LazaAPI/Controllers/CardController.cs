@@ -56,5 +56,22 @@ namespace LazaAPI.Controllers
 
 			return CreatedAtAction(nameof(GetAllCardsByUserId), new { userId = card.UserId }, cardDTO);
 		}
+		[HttpPost("Add-Address")]
+		public async Task<IActionResult> AddAddress([FromBody]AddressDTO addressDTO)
+		{
+			var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+			var add = new AddressUser
+			{
+				UserId = userId,
+				UserName = addressDTO.UserName,
+				Address = addressDTO.Address,
+				City = addressDTO.City,
+				Country = addressDTO.Country,
+				PhoneNumber = addressDTO.Phone
+			};
+			_unitOfWork.AddressRepository.AddAsync(add);
+			return Ok(new { Message = "Address Added To User successfully!" });
+		}
 	}
 }
