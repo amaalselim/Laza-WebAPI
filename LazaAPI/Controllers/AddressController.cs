@@ -3,6 +3,7 @@ using Google.Apis.Gmail.v1.Data;
 using LazaProject.Application.IUnitOfWork;
 using LazaProject.Core.DTO_S;
 using LazaProject.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -11,6 +12,7 @@ namespace LazaAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+	[Authorize]
     public class AddressController : ControllerBase
     {
 		private readonly IUnitOfWork _unitOfWork;

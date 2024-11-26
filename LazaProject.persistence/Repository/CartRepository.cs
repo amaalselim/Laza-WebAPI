@@ -101,18 +101,27 @@ namespace LazaProject.persistence.Repository
 		}
 
 
-		
 
 
-		public async Task RemoveFromCartAsync(string UserId, string ProductId)
-		{
-			var cart = await _context.carts
-				.Include(c => c.Items)
-				.FirstOrDefaultAsync(c => c.UserId == UserId);
 
-			_context.carts.Remove(cart);	
-			await _context.SaveChangesAsync();
-		}
-	}
-		
+        public async Task RemoveFromCartAsync(string UserId, string ProductId)
+        {
+            var cart = await _context.carts
+                .FirstOrDefaultAsync(c => c.UserId == UserId);
+
+            if (cart != null)
+            {
+                var cartItem = await _context.cartItems
+                    .FirstOrDefaultAsync(ci => ci.CartId == cart.Id && ci.ProductId == ProductId);
+
+                if (cartItem != null)
+                {
+                    _context.cartItems.Remove(cartItem);
+                    await _context.SaveChangesAsync();
+                }
+            }
+        }
+
+    }
+
 }

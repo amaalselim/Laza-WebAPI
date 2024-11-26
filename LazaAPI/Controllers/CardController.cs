@@ -3,6 +3,7 @@ using LazaProject.Application.IUnitOfWork;
 using LazaProject.Core.DTO_S;
 using LazaProject.Core.Models;
 using LazaProject.persistence.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -12,6 +13,7 @@ namespace LazaAPI.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize]
 	public class CardController : ControllerBase
 	{
 		private readonly IUnitOfWork _unitOfWork;

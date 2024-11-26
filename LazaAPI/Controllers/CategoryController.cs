@@ -2,6 +2,7 @@
 using LazaProject.Application.IUnitOfWork;
 using LazaProject.Core.DTO_S;
 using LazaProject.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace LazaAPI.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize(Roles ="Admin")]
 	public class CategoryController : ControllerBase
 	{
 		private readonly IUnitOfWork _unitOfWork;

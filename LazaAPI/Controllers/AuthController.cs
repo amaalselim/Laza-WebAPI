@@ -68,6 +68,7 @@ namespace LazaAPI.Controllers
 		}
 
 		[HttpPost("reset-password")]
+		[Authorize]
 		public async Task<IActionResult> ResetPassword(ForgetPasswordDTO forgetPasswordDTO)
 		{
 			var token = await _unitOfWork.AuthRepo.GeneratePasswordResetTokenAsync(forgetPasswordDTO);
@@ -90,6 +91,7 @@ namespace LazaAPI.Controllers
 
 		}
 		[HttpPost("update-password")]
+		[Authorize]
 		public async Task<IActionResult> UpdatePassword(UpdatePasswordDTO updatePasswordDTO)
 		{
 			if (!ModelState.IsValid)
@@ -108,6 +110,7 @@ namespace LazaAPI.Controllers
 
 		}
 		[HttpPost("verify-code")]
+		[Authorize]
 		public async Task<IActionResult> VerifyCode([FromBody]VerficationCodeDTO verficationCodeDTO)
 		{
 			var user = await _unitOfWork.AuthRepo.FindByEmailAsync(verficationCodeDTO.email);
@@ -167,7 +170,7 @@ namespace LazaAPI.Controllers
 		}
 
 		[HttpPost("assign-role")]
-		//[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> AssignRole([FromBody] AssignRoleDto assignRoleDto)
 		{
 			if (assignRoleDto == null) return BadRequest();
@@ -178,16 +181,6 @@ namespace LazaAPI.Controllers
 
 			}
 			return Ok("Role assigned successfully.");
-		}
-		[HttpGet("genders")]
-		public IActionResult GetGenders()
-		{
-			var genders = Enum.GetValues(typeof(Gender))
-							  .Cast<Gender>()
-							  .Select(g => new { Id = g.ToString(), Name = g.ToString() })
-							  .ToList();
-
-			return Ok(genders);
 		}
 
 	}

@@ -4,6 +4,7 @@ using LazaProject.Application.IUnitOfWork;
 using LazaProject.Core.DTO_S;
 using LazaProject.Core.Models;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace LazaAPI.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class ProductController : ControllerBase
+    public class ProductController : ControllerBase
 	{
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IImageService _imageService;
@@ -56,7 +57,8 @@ namespace LazaAPI.Controllers
 			return Ok(product);
 		}
 		[HttpPost]
-		public async Task<IActionResult> CreateProduct([FromForm] ProductDTO productDTO)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateProduct([FromForm] ProductDTO productDTO)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -104,7 +106,8 @@ namespace LazaAPI.Controllers
 
 
 		[HttpPut("{id}")]
-		public async Task<IActionResult> EditProduct(string id, [FromForm] ProductDTO productDTO)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EditProduct(string id, [FromForm] ProductDTO productDTO)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -168,7 +171,8 @@ namespace LazaAPI.Controllers
 
 
 		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteProduct(string id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteProduct(string id)
 		{
 			var product = await _unitOfWork.Product.GetByIdAsync(id);
 			if (product == null)

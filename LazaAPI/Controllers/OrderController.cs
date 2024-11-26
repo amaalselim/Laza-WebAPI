@@ -16,7 +16,8 @@ namespace LazaAPI.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class OrderController : ControllerBase
+    [Authorize]
+    public class OrderController : ControllerBase
 	{
 		private readonly IEmailService _emailService;
 		private readonly IOrderService _orderService;
