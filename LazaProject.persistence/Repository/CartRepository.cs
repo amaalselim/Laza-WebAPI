@@ -103,25 +103,6 @@ namespace LazaProject.persistence.Repository
             cart.Items = cart.Items.Where(i => i.IsActive).ToList();
             return _mapper.Map<CartDTO>(cart);
         }
-
-        //public async Task<CartDTO> GetCartAsync(string UserId)
-        //{
-        //	var cart = await _context.carts
-        //		.Include(c => c.Items.Where(i => i.IsActive))
-        //		.ThenInclude(i => i.Product)
-        //		.FirstOrDefaultAsync(c => c.UserId == UserId);
-
-        //	if (cart == null || !cart.Items.Any(i => i.IsActive))
-        //	{
-        //		return null;
-        //	}
-        //	return _mapper.Map<CartDTO>(cart);
-        //}
-
-
-
-
-
         public async Task RemoveFromCartAsync(string UserId, string ProductId)
         {
             var cart = await _context.carts

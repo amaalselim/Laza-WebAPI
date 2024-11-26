@@ -32,7 +32,7 @@ namespace LazaProject.persistence.Services
 		public async Task<CartDTO> GetCartByIdAsync(string userId)
 		{
 			var cart= await _context.carts
-            .Where(c => c.UserId == userId && c.Items.Any(i => i.IsActive==false))
+            .Where(c=>c.Items.Any(i => i.IsActive==false))
             .Include(c => c.Items.Where(i => i.IsActive==false))
 			.ThenInclude(i => i.Product)
 			.FirstOrDefaultAsync(c => c.UserId == userId);
