@@ -11,7 +11,9 @@ namespace LazaProject.Application.IServices
 	public interface IOrderService
 	{
 		Task<CartDTO> GetCartByIdAsync(string userId);
-		Task<AddressUser> GetBillingAddressAsync(string userId);
+		Task<List<CartDTO>> GetCartsByUserIdAsync(string userId);
+
+        Task<AddressUser> GetBillingAddressAsync(string userId);
 		Task<Card> GetPaymentCardAsync(string userId);
 	}
 

@@ -79,13 +79,14 @@ namespace LazaAPI.Controllers
 		public async Task<IActionResult> GetOrder()
 		{
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-			var order = await _orderService.GetCartByIdAsync(userId);
+			var order = await _orderService.GetCartsByUserIdAsync(userId);
             if (order == null)
             {
                 return Ok(new { Message = "No Orders Available" });
             }
             return Ok(order);
         }
+
 
 	}
 }

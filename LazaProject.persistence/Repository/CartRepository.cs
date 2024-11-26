@@ -32,7 +32,7 @@ namespace LazaProject.persistence.Repository
 			var cartDTo = await GetCartAsync(UserId);
 			Cart cart;
 
-			if (cartDTo == null)
+			if (cartDTo.Items.Count==0)
 			{
 				cart = new Cart { UserId = UserId };
 				await _context.carts.AddAsync(cart);
@@ -83,7 +83,6 @@ namespace LazaProject.persistence.Repository
 				{
 					item.IsActive = false;
 				}
-				cart.TotalPrice = 0;
 				await _context.SaveChangesAsync();
 			}
 		}
@@ -135,7 +134,7 @@ namespace LazaProject.persistence.Repository
 
                 if (cartItem != null)
                 {
-                    _context.cartItems.Remove(cartItem);
+					_context.cartItems.Remove(cartItem);
                     await _context.SaveChangesAsync();
                 }
             }

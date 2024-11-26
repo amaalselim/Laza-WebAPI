@@ -32,7 +32,7 @@ namespace LazaProject.persistence.Services
 		public async Task<CartDTO> GetCartByIdAsync(string userId)
 		{
 			var cart= await _context.carts
-			.Include(c => c.Items.Where(i => !i.IsActive))
+			.Include(c => c.Items.Where(i => i.IsActive==false))
 			.ThenInclude(i => i.Product)
 			.FirstOrDefaultAsync(c => c.UserId == userId);
             if (cart == null || cart.Items.Any(i => i.IsActive))
@@ -41,8 +41,23 @@ namespace LazaProject.persistence.Services
             }
             return _mapper.Map<CartDTO>(cart);
         }
+        public async Task<List<CartDTO>> GetCartsByUserIdAsync(string userId)
+        {
+            var carts = await _context.carts
+                .Where(c => c.UserId == userId)
+                .Include(c => c.Items.Where(i => i.IsActive == false))
+                .ThenInclude(i => i.Product)
+                .ToListAsync();
 
-		public async Task<Card> GetPaymentCardAsync(string userId)
+            if (!carts.Any())
+            {
+                return new List<CartDTO>(); 
+            }
+
+            return _mapper.Map<List<CartDTO>>(carts);
+        }
+
+        public async Task<Card> GetPaymentCardAsync(string userId)
 		{
 			return await _context.cards
 								 .FirstOrDefaultAsync(c => c.UserId == userId);
