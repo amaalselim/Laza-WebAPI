@@ -86,23 +86,22 @@ namespace LazaProject.persistence.Repository
 				await _context.SaveChangesAsync();
 			}
 		}
-        public async Task<CartDTO> GetCartAsync(string UserId)
+        public async Task<CartDTO> GetCartAsync(string userId)
         {
             var cart = await _context.carts
-                .Include(c => c.Items.Where(i => i.IsActive))
-                .ThenInclude(i => i.Product)
-                .FirstOrDefaultAsync(c => c.UserId == UserId);
+                .Where(c => c.UserId == userId)
+                .Include(c => c.Items.Where(i => i.IsActive)) 
+                    .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(c => c.Items.Any(i => i.IsActive) && c.Items.Count > 0); 
 
             if (cart == null)
             {
-                
                 return new CartDTO { Items = new List<CartItemDTO>() };
             }
 
-            
-            cart.Items = cart.Items.Where(i => i.IsActive).ToList();
             return _mapper.Map<CartDTO>(cart);
         }
+
         public async Task RemoveFromCartAsync(string UserId, string ProductId)
         {
             var cart = await _context.carts
