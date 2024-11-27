@@ -22,56 +22,55 @@ namespace LazaProject.persistence.Repository
 			_mapper = mapper;
 		}
 
-		public async Task AddToCartAsync(string UserId, CartItemDTO cartItemDTO)
-		{
-			if (cartItemDTO.Quantity == 0)
-			{
-				cartItemDTO.Quantity = 1;
-			}
+        public async Task AddToCartAsync(string userId, CartItemDTO cartItemDTO)
+        {
+            if (cartItemDTO.Quantity == 0)
+            {
+                cartItemDTO.Quantity = 1;
+            }
 
-			var cartDTo = await GetCartAsync(UserId);
-			Cart cart;
+            var cart = await _context.carts
+                .Include(c => c.Items)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
 
-			if (cartDTo.Items.Count==0)
-			{
-				cart = new Cart { UserId = UserId };
-				await _context.carts.AddAsync(cart);
-				await _context.SaveChangesAsync();
-			}
-			else
-			{
-				cart = await _context.carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.UserId == UserId);
-			}
+            if (cart == null)
+            {
+                cart = new Cart { UserId = userId };
+                await _context.carts.AddAsync(cart);
+                await _context.SaveChangesAsync();
+            }
 
-			var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == cartItemDTO.ProductId);
-			if (existingItem != null)
-			{
-				existingItem.Quantity = cartItemDTO.Quantity;
-				existingItem.Price = existingItem.Product.Price;
-			}
-			else
-			{
-				var cartItem = _mapper.Map<CartItem>(cartItemDTO);
-				cartItem.CartId = cart.Id;
+            var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == cartItemDTO.ProductId);
 
-				var product = await _context.products.FindAsync(cartItemDTO.ProductId);
-				if (product != null)
-				{
-					cartItem.Product = product;
-					cartItem.Price = product.Price;
-				}
+            if (existingItem != null)
+            {
+                existingItem.Quantity += cartItemDTO.Quantity;
+                existingItem.Price = existingItem.Product.Price;
+            }
+            else
+            {
+                var cartItem = _mapper.Map<CartItem>(cartItemDTO);
+                cartItem.CartId = cart.Id;
 
-				cart.Items.Add(cartItem);
-			}
+                var product = await _context.products.FindAsync(cartItemDTO.ProductId);
+                if (product != null)
+                {
+                    cartItem.Product = product;
+                    cartItem.Price = product.Price;
+                }
+                cart.Items.Add(cartItem);
+            }
 
-			cart.TotalPrice = cart.Items.Sum(item => item.Quantity * item.Price);
+            cart.TotalPrice = cart.Items.Sum(item => item.Quantity * item.Price);
 
-			_context.carts.Update(cart);
-			await _context.SaveChangesAsync();
-		}
+            _context.carts.Update(cart);
+            await _context.SaveChangesAsync();
+        }
 
 
-		public async Task ClearCartAsync(string UserId)
+
+
+        public async Task ClearCartAsync(string UserId)
 		{
 			var cart = await _context.carts
 				.Include(c => c.Items)
@@ -89,12 +88,11 @@ namespace LazaProject.persistence.Repository
         public async Task<CartDTO> GetCartAsync(string userId)
         {
             var cart = await _context.carts
-                .Where(c => c.UserId == userId)
-                .Include(c => c.Items.Where(i => i.IsActive)) 
+                .Include(c => c.Items.Where(i => i.IsActive))
                     .ThenInclude(i => i.Product)
-                .FirstOrDefaultAsync(c => c.Items.Any(i => i.IsActive) && c.Items.Count > 0); 
+                .FirstOrDefaultAsync(c => c.UserId == userId);
 
-            if (cart == null)
+            if (cart == null || cart.Items == null)
             {
                 return new CartDTO { Items = new List<CartItemDTO>() };
             }
@@ -102,23 +100,32 @@ namespace LazaProject.persistence.Repository
             return _mapper.Map<CartDTO>(cart);
         }
 
-        public async Task RemoveFromCartAsync(string UserId, string ProductId)
+
+
+        public async Task RemoveFromCartAsync(string userId, string productId)
         {
+           
             var cart = await _context.carts
-                .FirstOrDefaultAsync(c => c.UserId == UserId);
+                .Include(c => c.Items) 
+                .FirstOrDefaultAsync(c => c.UserId == userId);
 
-            if (cart != null)
+            if (cart == null)
             {
-                var cartItem = await _context.cartItems
-                    .FirstOrDefaultAsync(ci => ci.CartId == cart.Id && ci.ProductId == ProductId);
+                throw new Exception("Cart not found for the specified user."); // خطأ إذا لم يتم العثور على العربة
+            }
+            var cartItem = cart.Items.FirstOrDefault(ci => ci.ProductId == productId);
 
-                if (cartItem != null)
-                {
-					_context.cartItems.Remove(cartItem);
-                    await _context.SaveChangesAsync();
-                }
+            if (cartItem != null)
+            {
+                _context.cartItems.Remove(cartItem);
+                await _context.SaveChangesAsync(); 
+            }
+            else
+            {
+                throw new Exception("Item not found in the cart.");
             }
         }
+
 
     }
 
