@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using LazaProject.Application.IUnitOfWork;
 using AutoMapper;
+using LazaProject.persistence.UnitOfWork;
 
 namespace LazaAPI.Controllers
 {
@@ -86,7 +87,12 @@ namespace LazaAPI.Controllers
             }
             return Ok(order);
         }
-
-
-	}
+        [HttpDelete("Remove-Order/{Id}")]
+        public async Task<IActionResult> RemoveOrder(string Id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _orderService.RemoveOrderAsync(userId,Id);
+            return Ok("Order Cancelled Successfully");
+        }
+    }
 }

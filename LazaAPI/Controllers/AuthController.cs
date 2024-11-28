@@ -69,7 +69,6 @@ namespace LazaAPI.Controllers
 		}
 
 		[HttpPost("reset-password")]
-		[Authorize]
 		public async Task<IActionResult> ResetPassword(ForgetPasswordDTO forgetPasswordDTO)
 		{
 			var token = await _unitOfWork.AuthRepo.GeneratePasswordResetTokenAsync(forgetPasswordDTO);
@@ -92,7 +91,6 @@ namespace LazaAPI.Controllers
 
 		}
 		[HttpPost("update-password")]
-		[Authorize]
 		public async Task<IActionResult> UpdatePassword(UpdatePasswordDTO updatePasswordDTO)
 		{
 			if (!ModelState.IsValid)
@@ -111,7 +109,6 @@ namespace LazaAPI.Controllers
 
 		}
 		[HttpPost("verify-code")]
-		[Authorize]
 		public async Task<IActionResult> VerifyCode([FromBody]VerficationCodeDTO verficationCodeDTO)
 		{
 			var user = await _unitOfWork.AuthRepo.FindByEmailAsync(verficationCodeDTO.email);

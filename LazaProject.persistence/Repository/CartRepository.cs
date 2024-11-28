@@ -111,7 +111,7 @@ namespace LazaProject.persistence.Repository
 
             if (cart == null)
             {
-                throw new Exception("Cart not found for the specified user."); // خطأ إذا لم يتم العثور على العربة
+                throw new Exception("Cart not found for the specified user.");
             }
             var cartItem = cart.Items.FirstOrDefault(ci => ci.ProductId == productId);
 

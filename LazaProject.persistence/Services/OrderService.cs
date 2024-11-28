@@ -62,5 +62,17 @@ namespace LazaProject.persistence.Services
 			return await _context.cards
 								 .FirstOrDefaultAsync(c => c.UserId == userId);
 		}
-	}
+
+        public async Task RemoveOrderAsync(string userId,string orderId)
+        {
+            var order = await _context.carts
+                .FirstOrDefaultAsync(u => u.UserId == userId && u.Id == orderId);
+            if (order == null)
+            {
+                throw new Exception("order not found for the specified user.");
+            }
+            _context.carts.Remove(order);
+            await _context.SaveChangesAsync();
+        }
+    }
 }

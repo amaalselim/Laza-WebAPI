@@ -363,3 +363,7 @@ appsettings.json
 
 /LazaAPI/wwwroot/Images/Products/Small
 /LazaAPI/wwwroot/Images/Products
+# Ignore bin and obj folders
+bin/
+obj/
+

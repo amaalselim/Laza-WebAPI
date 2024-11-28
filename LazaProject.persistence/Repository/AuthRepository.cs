@@ -93,9 +93,6 @@ namespace LazaProject.persistence.Repository
 			}
 			return await _userManager.GeneratePasswordResetTokenAsync(user);
 		}
-
-
-
 		public async Task<object> LoginAsync(LoginDTO loginDTO)
 		{
 			var user = await _userManager.FindByEmailAsync(loginDTO.Email);

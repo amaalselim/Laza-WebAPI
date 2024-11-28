@@ -12,6 +12,7 @@ namespace LazaProject.Application.IServices
 	{
 		Task<CartDTO> GetCartByIdAsync(string userId);
 		Task<List<CartDTO>> GetCartsByUserIdAsync(string userId);
+		Task RemoveOrderAsync (string userId,string orderId);
 
         Task<AddressUser> GetBillingAddressAsync(string userId);
 		Task<Card> GetPaymentCardAsync(string userId);
